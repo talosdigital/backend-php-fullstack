@@ -1,0 +1,20 @@
+{
+    "name": "talosdigital/backend-php-fullstack",
+    "description": "backend-php-fullstack",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "framework",
+        "zf2"
+    ],
+    "homepage": "http://www.talosdigital.com",
+    "require": {
+        "php": ">=5.3",
+        "zendframework/zendframework": "2.*@stable",
+        "doctrine/mongodb-odm" : "1.*@dev",
+        "doctrine/doctrine-mongo-odm-module": "0.*",
+        "outeredge/swagger-module": "dev-master",
+        "zf-commons/zfc-user": "0.*",
+        "zf-commons/zfc-user-doctrine-mongo-odm": "0.*",
+        "bjyoungblood/bjy-authorize": "1.*@stable"
+    }
+}
