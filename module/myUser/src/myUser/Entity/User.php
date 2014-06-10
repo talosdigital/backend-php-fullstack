@@ -186,4 +186,27 @@ class User implements UserInterface
         $this->role = $role;
         return $this;
     }
+
+
+    /**
+     * Get Facebook.
+     *
+     * @return string
+     */
+    public function getFacebook()
+    {
+        return $this->facebook;
+    }
+
+    /**
+     * Set Facebook.
+     *
+     * @param string $role
+     * @return UserInterface
+     */
+    public function setFacebook($facebook)
+    {
+        $this->facebook = $facebook;
+        return $this;
+    }
 }
