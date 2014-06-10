@@ -212,7 +212,7 @@ class UserController extends AbstractRestfulController
                         
                         $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
                         $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
-                        $this->zfcUserAuthentication()->getAuthAdapter()->getEvent()->setIdentity($user);
+                        $this->zfcUserAuthentication()->getAuthService()->getStorage()->write($user);
 
                         return new JsonModel($response);
                     }
@@ -223,7 +223,7 @@ class UserController extends AbstractRestfulController
 
                         $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
                         $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
-                        $this->zfcUserAuthentication()->getAuthAdapter()->getEvent()->setIdentity($user);
+                        $this->zfcUserAuthentication()->getAuthService()->getStorage()->write($user);
                         
                         return new JsonModel($this->getUserArray($user));
                    }
