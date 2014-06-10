@@ -17,16 +17,12 @@ use Zend\View\Model\JsonModel;
 
 class Module
 {
-    public function onBootstrap(MvcEvent $e)
+   public function onBootstrap(MvcEvent $e)
     {
         $eventManager = $e->getApplication()->getEventManager();
         $sharedManager = $eventManager->getSharedManager();
-        //controller can't dispatch request action that passed to the url
-        $sharedManager->attach('Zend\Mvc\Controller\AbstractActionController',
-               'dispatch',
-               array($this, 'handleControllerCannotDispatchRequest' ), 101);
         //controller not found, invalid, or route is not matched anymore
-        $eventManager->attach('dispatch.error', 
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, 
                array($this,
               'handleControllerNotFoundAndControllerInvalidAndRouteNotFound' ), 100);
     }
@@ -47,50 +43,42 @@ class Module
         );
     }
      
-    public function handleControllerCannotDispatchRequest(MvcEvent $e)
-    {
-        $action = $e->getRouteMatch()->getParam('action');
-        $controller = get_class($e->getTarget());
-         
-        // error-controller-cannot-dispatch
-        if (! method_exists($e->getTarget(), $action.'Action')) {
-            $logText = 'The requested controller '.
-                        $controller.' was unable to dispatch the request : '.$action.'Action';
-            //you can do logging, redirect, etc here..
-             echo $logText;
-        }
-    }
      
     public function handleControllerNotFoundAndControllerInvalidAndRouteNotFound(MvcEvent $e)
     {
+        
         $error  = $e->getError();
+        $logText =  'Internal server error';
+        $statusCode = 500;
         if ($error == Application::ERROR_CONTROLLER_NOT_FOUND) {
             //there is no controller named $e->getRouteMatch()->getParam('controller')
             $logText =  'The requested controller '
                         .$e->getRouteMatch()->getParam('controller'). '  could not be mapped to an existing controller class.';
-             
-            //you can do logging, redirect, etc here..
-            echo $logText;
+            $statusCode = 404;
         }
-         
-        if ($error == Application::ERROR_CONTROLLER_INVALID) {
+        elseif ($error == Application::ERROR_CONTROLLER_INVALID) {
             //the controller doesn't extends AbstractActionController
             $logText =  'The requested controller '
                         .$e->getRouteMatch()->getParam('controller'). ' is not dispatchable';
-             
-            //you can do logging, redirect, etc here..
-            echo $logText;
+            $statusCode = 404;
         }
-         
-        if ($error == Application::ERROR_ROUTER_NO_MATCH) {
-            $event = \Zend\Mvc\MvcEvent::EVENT_DISPATCH;
+        elseif ($error == Application::ERROR_ROUTER_NO_MATCH) {
             // the url doesn't match route, for example, there is no /foo literal of route
-            var_dump($event->getTarget()->getRequest());
-            die();
             $logText =  'The requested URL could not be matched by routing.';
-            //you can do logging, redirect, etc here...
-            echo $logText;
+            $statusCode = 404;
         }
+        elseif ($error == Application::ERROR_EXCEPTION) {
+            if($e->getParam('exception')) {
+                $logText =  $e->getParam('exception')->getMessage();
+            }
+            $statusCode = 500;
+        }
+
+        $response = $e->getResponse();
+        echo json_encode(array('message' => $logText));
+        $response->setStatusCode($statusCode);
+        $response->sendHeaders();
+        exit;
     } 
 
 }
