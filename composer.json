@@ -16,6 +16,9 @@
         "zf-commons/zfc-user": "0.*",
         "zf-commons/zfc-user-doctrine-mongo-odm": "0.*",
         "bjyoungblood/bjy-authorize": "1.*@stable",
-        "facebook/php-sdk-v4" : "4.0.*"
+        "facebook/php-sdk-v4" : "4.0.*",
+		"myzend/core": "0.*",
+		"myzend/email": "0.*",
+		"myzend/geolocation": "0.*"
     }
 }
