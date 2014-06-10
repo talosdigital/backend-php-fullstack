@@ -8,6 +8,12 @@
  */
 
 return array(
+    'controllers' => array(
+        'invokables' => array(
+            'Application\Controller\Index' => 'Application\Controller\IndexController'
+        ),
+    ),
+    
     'router' => array(
         'routes' => array(
             'home' => array(
@@ -20,10 +26,6 @@ return array(
                     ),
                 ),
             ),
-            // The following is a route to simplify getting started creating
-            // new controllers and actions without needing to create a new
-            // module. Simply drop new controllers in, and you can access them
-            // using the path /application/:controller/:action
             'application' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -52,6 +54,7 @@ return array(
             ),
         ),
     ),
+    
     'service_manager' => array(
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -61,6 +64,7 @@ return array(
             'translator' => 'MvcTranslator',
         ),
     ),
+    
     'translator' => array(
         'locale' => 'en_US',
         'translation_file_patterns' => array(
@@ -71,11 +75,7 @@ return array(
             ),
         ),
     ),
-    'controllers' => array(
-        'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
-        ),
-    ),
+    
     'view_manager' => array(
         'strategies' => array(
             'ViewJsonStrategy'
@@ -94,13 +94,5 @@ return array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
-    ),
-    // Placeholder for console routes
-    'console' => array(
-        'router' => array(
-            'routes' => array(
-
-            ),
-        ),
-    ),
+    )
 );

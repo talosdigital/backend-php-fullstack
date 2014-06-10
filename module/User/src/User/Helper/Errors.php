@@ -1,6 +1,6 @@
 <?php
 
-namespace myUser\Helper;
+namespace User\Helper;
 
 class Errors{
 

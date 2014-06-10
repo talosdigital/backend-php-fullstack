@@ -1,6 +1,6 @@
 <?php
 
-namespace myUser\Entity;
+namespace User\Entity;
 
 interface UserInterface
 {

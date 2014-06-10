@@ -1,6 +1,6 @@
 <?php
 
-namespace myUser\Controller;
+namespace User\Controller;
 
 use Zend\Form\Form;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -14,8 +14,8 @@ use ZfcUser\Form\Register;
 use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use ZfcUser\Mapper\UserInterface as UserMapperInterface;
-use myUser\Helper\Errors;
-use myUser\Entity\User as myUser;
+use User\Helper\Errors;
+use User\Entity\User as User;
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
@@ -48,7 +48,7 @@ class UserController extends AbstractRestfulController
     /**
      * @var string
      */
-    protected $document = "myUser\Entity\User";
+    protected $document = "User\Entity\User";
     /**
      * @var UserService
      */
@@ -200,7 +200,7 @@ class UserController extends AbstractRestfulController
                     $facebookUser = $this->getFacebookUser($request->{'password'});
                     $user = $this->getUserByEmail($facebookUser['email']);
                     if(empty($user)){
-                        $user = new myUser();
+                        $user = new User();
                         $user->setEmail($facebookUser['email']);
                         $user->setName($facebookUser['name']);
                         $user->setFacebook($facebookUser['facebook']);
@@ -217,10 +217,9 @@ class UserController extends AbstractRestfulController
                         return new JsonModel($response);
                     }
                     else{
-                        if(empty($user->getFacebook())){
+                        if(empty($user->getFacebook())) { 
                             $this->mergeFacebook($user, $request->{'password'});
-                        }
-
+						}
                         $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
                         $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
                         $this->zfcUserAuthentication()->getAuthService()->getStorage()->write($user);
@@ -508,7 +507,8 @@ class UserController extends AbstractRestfulController
         $request = new FacebookRequest($session, 'GET', '/me');
         $response = $request->execute();
         $graph = $response->getGraphObject(GraphUser::className());
-        $userRequest = array('name' => $graph->getName(), 'email' => $graph->asArray()['email'], 'facebook' => $token);
+		$facebookArray = $graph->asArray();
+        $userRequest = array('name' => $graph->getName(), 'email' => $facebookArray['email'], 'facebook' => $token);
         return $userRequest;
     }
 

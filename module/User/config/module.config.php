@@ -7,7 +7,7 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-namespace myUser;
+namespace User;
 
 return array(
     // Perhaps some other config here
@@ -20,7 +20,7 @@ return array(
                 'options' => array(
                     'route' => '/users[/:action][/:id]',
                     'defaults' => array(
-                        'controller' => 'myUser\Controller\User',
+                        'controller' => 'User\Controller\User',
                         'action'     => 'index',
                     ),
                 ),
@@ -30,18 +30,8 @@ return array(
                 'options' => array(
                     'route'    => '/session',
                     'defaults' => array(
-                        'controller' => 'myUser\Controller\User',
+                        'controller' => 'User\Controller\User',
                         'action'     => 'session',
-                    ),
-                ),
-            ),
-        'Awesome' => array(
-                'type'    => 'segment',
-                'options' => array(
-                    'route'    => '/awesomeThings',
-                    'defaults' => array(
-                        'controller' => 'myUser\Helper\Awesome',
-                        'action'     => 'index',
                     ),
                 ),
             ),
@@ -49,8 +39,8 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'myUser\Controller\User' => 'myUser\Controller\UserController',
-            'myUser\Helper\Awesome' => 'myUser\Helper\AwesomeController',
+            'User\Controller\User' => 'User\Controller\UserController',
+            'User\Helper\Awesome' => 'User\Helper\AwesomeController',
         ),
     ),
     'doctrine' => array(

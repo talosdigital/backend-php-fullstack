@@ -1,6 +1,6 @@
 <?php
 
-namespace myUser\Entity;
+namespace User\Entity;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /** @ODM\Document(collection="user") */

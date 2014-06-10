@@ -8,7 +8,7 @@ return array(
         'ZfcBase',
         'ZfcUser',
         'ZfcUserDoctrineMongoODM',
-        'myUser',
+        'User',
     ),
 
     // These are various options for the listeners attached to the ModuleManager
