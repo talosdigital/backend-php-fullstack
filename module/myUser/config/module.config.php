@@ -16,11 +16,12 @@ return array(
     'router' => array(
         'routes' => array(
             'zfcuser' => array(
+                'type'    => 'segment',
                 'options' => array(
-                    'route' => '/users',
+                    'route' => '/users[/:action][/:id]',
                     'defaults' => array(
-                        'controller' => 'myUser\Controller\User'
-
+                        'controller' => 'myUser\Controller\User',
+                        'action'     => 'index',
                     ),
                 ),
             ),

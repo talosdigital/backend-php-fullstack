@@ -323,6 +323,45 @@ class UserController extends AbstractRestfulController
     }
 
     /**
+    * Merge and Unmerge actions API
+    */
+    public function mergeAction(){
+        $method = $this->getRequest()->getMethod();
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        switch ($method) {
+            case 'DELETE':
+                $this->mergeFacebook($user, null);
+                header('HTTP/1.0 200');
+                exit();
+                break;
+            case 'PUT':
+                $request = $this->getPostData();
+                $token = $request->{'authResponse'}->{'accessToken'};
+                
+                $facebookUser = $this->getFacebookUser($request->{'password'});
+                $userFB = $this->getUserByEmail($facebookUser['email']);
+                
+                $user = $this->getActiveUser();
+                if(empty($userFB->getEmail())){
+                    $this->mergeFacebook($user, $token);
+                    header('HTTP/1.0 200');
+                }
+                else{
+                    if($userFB->getEmail()!=$user->getEmail()){
+                        echo new Errors('facebook email');
+                        header('HTTP/1.0 500');
+                    }
+                    else{
+                        $this->mergeFacebook($user, $token);
+                        header('HTTP/1.0 200');
+                    }
+                }
+                exit();
+                break;
+        }
+    }
+
+    /**
      * Getters/setters for DI stuff
      */
 
