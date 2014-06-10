@@ -88,13 +88,11 @@ class UserController extends AbstractRestfulController
     /**
     * Initialize facebook API params
     */
+    /*
     function __construct(){
-        /**
-        * This is the Facebook SDK Token
-        */
         FacebookSession::setDefaultApplication($this->fbToken, $this->fbSecret);
     }
-
+*/
     /**
      * Some actions over the User API
      */
@@ -180,22 +178,9 @@ class UserController extends AbstractRestfulController
         $service = $this->getUserService();
         $method = $this->getRequest()->getMethod();
         switch ($method) {
-            /*
-            * Login API
-            */
             case 'POST':
                 $request = $this->getPostData();
-                /*
-                *   request is a JSON object and it's structured 
-                    {                
-                     email: 'user_email',
-                     password: 'user_password',
-                     facebook: boolean
-                     }
-                */
-                
                 //This is for facebook login
-
                 if($request->{'facebook'}){
                     $facebookUser = $this->getFacebookUser($request->{'password'});
                     $user = $this->getUserByEmail($facebookUser['email']);
@@ -217,7 +202,8 @@ class UserController extends AbstractRestfulController
                         return new JsonModel($response);
                     }
                     else{
-                        if(empty($user->getFacebook())) { 
+                    	$result = $user->getFacebook();
+                        if(empty($result)) { 
                             $this->mergeFacebook($user, $request->{'password'});
 						}
                         $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
@@ -273,9 +259,6 @@ class UserController extends AbstractRestfulController
                 }
                 break;
 
-            /*
-            * Verify if the user is logged in
-            */
             case 'GET':
                 $user = $this->zfcUserAuthentication()->getIdentity();
                 if(!empty($user)){
@@ -290,10 +273,6 @@ class UserController extends AbstractRestfulController
                     exit();
                 }
                 break;
-
-            /*
-            * Logout API
-            */
             case 'DELETE':
                 $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
                 $this->zfcUserAuthentication()->getAuthAdapter()->logoutAdapters();
@@ -302,6 +281,7 @@ class UserController extends AbstractRestfulController
                 exit();
                 break;
         }
+
     }
 
     /**
@@ -309,7 +289,8 @@ class UserController extends AbstractRestfulController
     */
     public function checkAction(){
         $user = $this->zfcUserAuthentication()->getIdentity();
-        if(empty($user->getFacebook())){
+		$result = $user->getFacebook(); 
+        if(empty($result)){
             echo json_encode(array('valid' => false));
             header('HTTP/1.0 200');
             exit();
@@ -341,7 +322,8 @@ class UserController extends AbstractRestfulController
                 $userFB = $this->getUserByEmail($facebookUser['email']);
                 
                 $user = $this->getActiveUser();
-                if(empty($userFB->getEmail())){
+				$result = $userFB->getEmail();
+                if(empty($result)){
                     $this->mergeFacebook($user, $token);
                     header('HTTP/1.0 200');
                 }
