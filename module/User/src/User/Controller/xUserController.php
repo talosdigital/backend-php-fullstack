@@ -25,7 +25,7 @@ use Facebook\FacebookRequestException;
 use Facebook\FacebookAuthorizationException;
 use Facebook\GraphObject;
 use Facebook\GraphUser;
-
+die("as");
 class UserController extends AbstractRestfulController
 {
     const ROUTE_CHANGEPASSWD = 'zfcuser/changepassword';

@@ -16,3 +16,5 @@ build/*
 bin/*
 vendor/*
 public/api-doc/resources/*
+swagger.sh
+composer.sh
