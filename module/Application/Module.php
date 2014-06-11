@@ -75,6 +75,10 @@ class Module
             }
             $statusCode = 500;
         }
+        elseif ($error == Application::ERROR_CONTROLLER_CANNOT_DISPATCH){
+            $logText =  'The requested URL could not be matched by routing.';
+            $statusCode = 404;
+        }
 
         $response = $e->getResponse();
         echo json_encode(array('error_code' => $errorCode, 'message' => $logText));

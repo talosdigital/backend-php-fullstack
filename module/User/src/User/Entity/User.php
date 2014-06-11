@@ -55,6 +55,14 @@ class User extends Document
      *
      * @ODM\String
      */
-    protected $facebook;
+    protected $facebook_id;
 
+
+    public function setFacebookId($facebook_id){
+        $this->facebook_id = $facebook_id;
+    }
+
+    public function getFacebookId(){
+        return $this->facebook_id;
+    }
 }

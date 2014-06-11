@@ -68,11 +68,11 @@ class UserEntityUserHydrator implements HydratorInterface
         }
 
         /** @Field(type="string") */
-        if (isset($data['facebook'])) {
-            $value = $data['facebook'];
+        if (isset($data['facebook_id'])) {
+            $value = $data['facebook_id'];
             $return = (string) $value;
-            $this->class->reflFields['facebook']->setValue($document, $return);
-            $hydratedData['facebook'] = $return;
+            $this->class->reflFields['facebook_id']->setValue($document, $return);
+            $hydratedData['facebook_id'] = $return;
         }
         return $hydratedData;
     }

@@ -14,7 +14,8 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'User\Controller\Auth' => 'User\Controller\AuthController',
-            'User\Controller\Profile' => 'User\Controller\ProfileController'
+            'User\Controller\Profile' => 'User\Controller\ProfileController',
+            'User\Controller\Address' => 'User\Controller\AddressController'
 		),
     ),
 
@@ -82,7 +83,8 @@ return array(
 	    'guards' => array(
 	        'BjyAuthorize\Guard\Controller' => array(
 	            array('controller' => 'User\Controller\Auth', 'roles' => array('guest')),           
-	            array('controller' => 'User\Controller\Profile', 'roles' => array('guest'))            
+	            array('controller' => 'User\Controller\Profile', 'roles' => array('guest')),         
+                array('controller' => 'User\Controller\Address', 'roles' => array('guest'))            
 	        ),
 	    ),
 	),

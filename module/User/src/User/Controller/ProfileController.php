@@ -18,6 +18,10 @@ class ProfileController extends AbstractRestfulController
     *   basePath = "/../../user")
     */
 
+	private function loadEmailAdapter() {
+		$adapter = new \User\Auth\EmailAdapter($this->getServiceLocator());
+		return $adapter;
+	}
 	/**
      *
      * @SWG\Api(
@@ -36,9 +40,18 @@ class ProfileController extends AbstractRestfulController
 		return new JsonModel(array("message" => "This is your dashboard."));
 	}
 
-
-	public function getCurrentUser(){
+	private function getCurrentUser(){
 		return $this->zfcUserAuthentication()->getIdentity();
+	}
+
+	private function getPasswordRequired(){
+		$user = $this->getCurrentUser();
+		if($user->getPassword()){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	/**
      *
@@ -51,20 +64,20 @@ class ProfileController extends AbstractRestfulController
  	 *      @SWG\Parameters(
      *          @SWG\Parameter(
      *              name="currentPassword",
-     *              paramType="path",
+     *              paramType="form",
      *              type="string",
      *              required=false,
      *				description = "It's not required if the user signed up with social networks"
      *          ),
      *          @SWG\Parameter(
      *              name="newPassword",
-     *              paramType="path",
+     *              paramType="form",
      *              type="string",
      *              required=true
      *          ),
      *          @SWG\Parameter(
      *              name="newPasswordVerify",
-     *              paramType="path",
+     *              paramType="form",
      *              type="string",
      *              required=true
      *          )
@@ -87,25 +100,56 @@ class ProfileController extends AbstractRestfulController
      *)
      */
 	public function changePasswordAction(){
-		$isPost = $this->getRequest()->isPost();
-		$isGet = $this->getRequest()->isGet();
+		$request = $this->getRequest();
+		$isPost = $request->isPost();
+		$isGet = $request->isGet();
 		$user = $this->getCurrentUser();
 
 		if($isGet){
-			if($user->getPassword()){
-				$passwordRequired = true;
-			}
-			else{
-				$passwordRequired = false;
-			}
+			$passwordRequired = $this->getPasswordRequired();
 			return new JsonModel(array("passwordRequired" => $passwordRequired));	
 		}
 
 		if($isPost){
-			$data = $this->getRequest()->getPost();
-			$adapter = $this->loadAdapter();
-			$user = $adapter->signup($data);
-			return new JsonModel(array("message" => "User was created."));	
+			$data = $request->getPost();
+			$adapter = $this->loadEmailAdapter();
+			$adapter->changePassword($data, $user);
+			return new JsonModel(array("message" => "Password changed."));
 		}
+	}
+
+	/**
+     *
+     * @SWG\Api(
+     *   path="/profile/change-email",
+     *    @SWG\Operation(
+     *      nickname="change_email",
+     *      method = "POST",
+     *      summary="change email form",
+ 	 *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="email",
+     *              name="email",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          ),
+     *          @SWG\Parameter(
+     *              name="password",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          )
+     *      )
+     *   )
+     *  )
+     *)
+     */
+	public function changeEmailAction(){
+		$user = $this->getCurrentUser();
+		$data = $this->getRequest()->getPost();
+		$adapter = $this->loadEmailAdapter();
+		$adapter->changeEmail($data, $user);
+		return new JsonModel(array("message" => "Email changed."));
 	}
 }
