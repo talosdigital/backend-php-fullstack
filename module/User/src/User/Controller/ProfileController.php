@@ -11,7 +11,7 @@ class ProfileController extends AbstractRestfulController
 {
 
 	public function indexAction() {
-		
+	
 		return new JsonModel(array("message" => "This is your dashboard."));
 	}
 }
