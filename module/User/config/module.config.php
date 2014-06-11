@@ -10,50 +10,81 @@
 namespace User;
 
 return array(
-    // Perhaps some other config here
 
-    // Start to overwrite zfcuser's route
-    'router' => array(
-        'routes' => array(
-            'zfcuser' => array(
-                'type'    => 'segment',
-                'options' => array(
-                    'route' => '/users[/:action][/:id]',
-                    'defaults' => array(
-                        'controller' => 'User\Controller\User',
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            'Session' => array(
-                'type'    => 'segment',
-                'options' => array(
-                    'route'    => '/session',
-                    'defaults' => array(
-                        'controller' => 'User\Controller\User',
-                        'action'     => 'session',
-                    ),
-                ),
-            ),
-        ),
-    ),
     'controllers' => array(
         'invokables' => array(
-            'User\Controller\User' => 'User\Controller\UserController'
+            'User\Controller\Auth' => 'User\Controller\AuthController',
+            'User\Controller\Profile' => 'User\Controller\ProfileController'
+		),
+    ),
+
+    'router' => array(
+        'routes' => array(
+        	// override zfcuser controllers
+            'zfcuser' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/user',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'User\Controller',
+                        'controller'    => 'Index',
+                        'action'        => 'index',
+                    ),
+                ),
+                'child_routes' => array(),
+            ),
+            // User routing
+            'user' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/user',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'User\Controller',
+                        'controller'    => 'Index',
+                        'action'        => 'index',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'default' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/[:controller[/:action]]',
+                            'constraints' => array(
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            ),
+                            'defaults' => array(
+                            ),
+                        ),
+                    ),
+                ),
+            )
         ),
     ),
+    
     'doctrine' => array(
-    'driver' => array(
-          __NAMESPACE__ . '_driver' => array(
-            'class' => 'Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver',
-            'cache' => 'array',
-            'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity')
+	    'driver' => array(
+	          __NAMESPACE__ . '_driver' => array(
+	            'class' => 'Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver',
+	            'cache' => 'array',
+	            'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity')
           ),
-          'odm_default' => array(
-            'drivers' => array(
-            __NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver'
-          )
-        )
-      )
-    )
+	          'odm_default' => array(
+	          'drivers' => array(
+	           	__NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver'
+	           )
+			)
+		)
+	),
+
+	'bjyauthorize' => array(
+	    'guards' => array(
+	        'BjyAuthorize\Guard\Controller' => array(
+	            array('controller' => 'User\Controller\Auth', 'roles' => array('guest')),           
+	            array('controller' => 'User\Controller\Profile', 'roles' => array('user'))            
+	        ),
+	    ),
+	),
+	
 );

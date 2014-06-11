@@ -15,7 +15,7 @@
         "outeredge/swagger-module": "dev-master",
         "zf-commons/zfc-user": "0.*",
         "zf-commons/zfc-user-doctrine-mongo-odm": "0.*",
-        "bjyoungblood/bjy-authorize": "1.*@stable",
+		"bjyoungblood/bjy-authorize": "1.2.*",
         "facebook/php-sdk-v4" : "4.0.*",
 		"myzend/core": "0.*",
 		"myzend/email": "0.*",

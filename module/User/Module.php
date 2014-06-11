@@ -14,6 +14,10 @@ use Zend\Mvc\MvcEvent;
 
 class Module
 {
+	const ERROR_UNEXPECTED = 0;
+	const ERROR_DUPLICATED_EMAIL = 100;
+	const ERROR_LOGIN_FAILED = 200;
+	
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager        = $e->getApplication()->getEventManager();

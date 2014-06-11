@@ -2,7 +2,8 @@
 
 namespace User\Helper;
 
-class Errors{
+class Error {
+	const REPEATED_EMAIL = 100;
 
     protected $errorResponse;
     protected $errorType;
@@ -13,14 +14,6 @@ class Errors{
 
     public function setError(){
         switch ($this->errorType) {
-            case 'repeated email':
-                $headMessage = "Email error";
-                $message = "This email is already taken";
-                $input = "email";
-                $name = "Email error";
-                $path = "email";
-                $type = "Email is not unique";
-                break;
 
             case 'wrong password':
                 $headMessage = "Password is incorrect";
@@ -44,7 +37,7 @@ class Errors{
 
             default:
                 $headMessage = "HTTP";
-                $message = "This is the default error message";
+                $message = "";
                 $input = "error";
                 $name = "Default";
                 $path = "default";

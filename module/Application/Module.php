@@ -50,6 +50,7 @@ class Module
         $error  = $e->getError();
         $logText =  'Internal server error';
         $statusCode = 500;
+		$errorCode = 0;
         if ($error == Application::ERROR_CONTROLLER_NOT_FOUND) {
             //there is no controller named $e->getRouteMatch()->getParam('controller')
             $logText =  'The requested controller '
@@ -70,12 +71,13 @@ class Module
         elseif ($error == Application::ERROR_EXCEPTION) {
             if($e->getParam('exception')) {
                 $logText =  $e->getParam('exception')->getMessage();
+				$errorCode = $e->getParam('exception')->getCode();
             }
             $statusCode = 500;
         }
 
         $response = $e->getResponse();
-        echo json_encode(array('message' => $logText));
+        echo json_encode(array('error_code' => $errorCode, 'message' => $logText));
         $response->setStatusCode($statusCode);
         $response->sendHeaders();
         exit;

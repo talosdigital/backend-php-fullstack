@@ -88,11 +88,11 @@ class UserController extends AbstractRestfulController
     /**
     * Initialize facebook API params
     */
-    /*
+
     function __construct(){
         FacebookSession::setDefaultApplication($this->fbToken, $this->fbSecret);
     }
-*/
+	
     /**
      * Some actions over the User API
      */
@@ -105,36 +105,6 @@ class UserController extends AbstractRestfulController
             *   Sign up API
             */
             case "POST":  
-                $request = $this->getPostData();
-                /*
-                *   request is a JSON object and it's structured 
-                    {
-                     name: 'user_name', 
-                     email: 'user_email',
-                     password: 'user_password',
-                     role: 'role'
-                     }
-                */
-                $post = array(
-                        "email" => $request->{'email'},
-                        "password" => $request->{'password'},
-                        "passwordVerify" => $request->{'password'},
-                        "submit" => ""
-                        );
-                $user = $service->register($post);
-                if(empty($user)){
-                    echo new Errors('repeated email');
-                    header('HTTP/1.1 400 Incorrect Email', true, 400);
-                    exit();
-                }
-                else{
-                    $user->setName($request->{'name'});
-                    $user->setRole('user');
-                    $service->getUserMapper()->update($user);
-                }
-                return new JsonModel($this->postToArray($request));
-                break;
-
             /**
             * Change Password API
             */
@@ -215,48 +185,6 @@ class UserController extends AbstractRestfulController
 
                 }
                 
-                //Without facebook login
-                $params = new Parameters();
-                $params->set('identity', $request->{'email'});
-                $params->set('credential', $request->{'password'});
-                $params->set('submit', '');
-
-                $form = $this->getLoginForm();
-                $form->setData($params);
-
-                if (!$form->isValid()) {
-                    echo new Errors('wrong credentials');
-                    header('HTTP/1.0 401 Not Found');
-                    exit();
-                }
-                else{
-                    $user = $this->getUserByEmail($request->{'email'});
-                }
-
-                $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
-                $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
-                $this->forward()->dispatch(static::CONTROLLER_NAME, array('action' => 'authenticate'));
-                
-                $adapter = $this->zfcUserAuthentication()->getAuthAdapter();
-                
-                $emulateRequest = new Request();
-                $emulateRequest->setPost($params);
-
-                $result = $adapter->prepareForAuthentication($emulateRequest);
-                $auth = $this->zfcUserAuthentication()->getAuthService()->authenticate($adapter);
-                
-                if (!$auth->isValid()) {
-                    echo new Errors('wrong credentials');
-                    header('HTTP/1.0 401 Not Found');
-                    exit();
-                }
-                else{
-                    $user = $this->zfcUserAuthentication()->getIdentity();
-                    $responseArray = $this->getUserArray($user);
-                    echo json_encode($responseArray);
-                    header('HTTP/1.0 200 Success');
-                    exit();
-                }
                 break;
 
             case 'GET':
@@ -272,13 +200,6 @@ class UserController extends AbstractRestfulController
                     header('HTTP/1.0 401');
                     exit();
                 }
-                break;
-            case 'DELETE':
-                $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
-                $this->zfcUserAuthentication()->getAuthAdapter()->logoutAdapters();
-                $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
-                header('HTTP/1.0 200');
-                exit();
                 break;
         }
 
@@ -346,52 +267,7 @@ class UserController extends AbstractRestfulController
      * Getters/setters for DI stuff
      */
 
-    public function getUserService()
-    {
-        if (!$this->userService) {
-            $this->userService = $this->getServiceLocator()->get('zfcuser_user_service');
-        }
-        return $this->userService;
-    }
 
-    public function setUserService(UserService $userService)
-    {
-        $this->userService = $userService;
-        return $this;
-    }
-
-    public function getRegisterForm()
-    {
-        if (!$this->registerForm) {
-            $this->setRegisterForm($this->getServiceLocator()->get('zfcuser_register_form'));
-        }
-        return $this->registerForm;
-    }
-
-    public function setRegisterForm(Form $registerForm)
-    {
-        $this->registerForm = $registerForm;
-    }
-
-    public function getLoginForm()
-    {
-        if (!$this->loginForm) {
-            $this->setLoginForm($this->getServiceLocator()->get('zfcuser_login_form'));
-        }
-        return $this->loginForm;
-    }
-
-    public function setLoginForm(Form $loginForm)
-    {
-        $this->loginForm = $loginForm;
-        $fm = $this->flashMessenger()->setNamespace('zfcuser-login-form')->getMessages();
-        if (isset($fm[0])) {
-            $this->loginForm->setMessages(
-                array('identity' => array($fm[0]))
-            );
-        }
-        return $this;
-    }
 
     public function getChangePasswordForm()
     {
