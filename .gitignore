@@ -14,7 +14,9 @@ min-*
 *.pyc
 build/*
 bin/*
+data/*
 vendor/*
 public/api-doc/resources/*
 swagger.sh
 composer.sh
+
