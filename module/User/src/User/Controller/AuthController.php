@@ -51,6 +51,18 @@ class AuthController extends AbstractRestfulController
      *				description="It takes the adapter needed ('facebook' for facebook adapter, null for email adapter)"
      *          ),
      *          @SWG\Parameter(
+     *              name="facebookId",
+     *              paramType="form",
+     *              type="string",
+     *              required=false
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookToken",
+     *              paramType="form",
+     *              type="string",
+     *              required=false
+     *          ),
+     *          @SWG\Parameter(
      *              name="email",
      *              paramType="form",
      *              type="string",
@@ -102,6 +114,18 @@ class AuthController extends AbstractRestfulController
      *				description="It takes the adapter needed ('facebook' for facebook adapter, null for email adapter)"
      *          ),
      *          @SWG\Parameter(
+     *              name="facebookId",
+     *              paramType="form",
+     *              type="string",
+     *              required=false
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookToken",
+     *              paramType="form",
+     *              type="string",
+     *              required=false
+     *          ),
+     *          @SWG\Parameter(
      *              name="email",
      *              paramType="form",
      *              type="string",
@@ -114,13 +138,6 @@ class AuthController extends AbstractRestfulController
      *              type="string",
      *              required=false,
      *				description = "It's not required if adapter is not null"
-     *          ),
-     *          @SWG\Parameter(
-     *              name="facebookId",
-     *              paramType="form",
-     *              type="string",
-     *              required=false,
-     *				description = "It's only required if adapter is facebook"
      *          )
      *      )
      *   )
@@ -152,5 +169,28 @@ class AuthController extends AbstractRestfulController
 
 		$user = $adapter->logout();
 		return new JsonModel(array("message" => "Logout completed."));
+	}
+
+	/**
+     *
+     * @SWG\Api(
+     *   path="/auth/merge",
+     *    @SWG\Operation(
+     *      nickname="logout",
+     *      method = "GET",
+     *      summary="logout action",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="adapter",
+     *              paramType="form",
+     *              type="string",
+     *              required=false
+     *          )
+     *   )
+     *  )
+     *)
+     */
+	public function mergeAction(){
+
 	}
 }

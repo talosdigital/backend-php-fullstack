@@ -5,6 +5,7 @@ namespace User\Auth;
 class AbstractAdapter {
 		
 	private $serviceLocator;
+	private $document = "User\Entity\User";
 
 	public function __construct($serviceLocator) {
 		$this->serviceLocator = $serviceLocator;		
@@ -34,5 +35,12 @@ class AbstractAdapter {
         $controllerPlugin->setAuthAdapter($this->getAuthAdapter());
         return $controllerPlugin;
 	}
+
+	protected function getDocument(){
+		return $this->document;
+	}
 	
+	protected function getUserService(){
+        return $this->getServiceLocator()->get('zfcuser_user_service');
+    }
 }

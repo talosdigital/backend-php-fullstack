@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use BjyAuthorize\Provider\Role\ProviderInterface as RoleProviderInterface;
 use MyZend\Document\Document as Document;
 
-
 /** @ODM\Document(collection="user_user") */
 class User extends Document implements RoleProviderInterface
 {
@@ -78,4 +77,5 @@ class User extends Document implements RoleProviderInterface
 	public function getRoles() {
 		
 	}
+
 }

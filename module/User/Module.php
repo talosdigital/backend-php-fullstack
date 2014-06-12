@@ -26,6 +26,9 @@ class Module
 	const ERROR_UNEXPECTED = 0;
 	const ERROR_DUPLICATED_EMAIL = 100;
 	const ERROR_LOGIN_FAILED = 200;
+    const ERROR_CHANGE_PASSWORD_FAILED = 300;
+    const ERROR_CHANGE_EMAIL_FAILED = 400;
+    const ERROR_FACEBOOK_REGISTER_FAILED = 500;
 	
     public function onBootstrap(MvcEvent $e)
     {
