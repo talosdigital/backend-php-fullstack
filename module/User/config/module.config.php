@@ -14,9 +14,28 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'User\Controller\Auth' => 'User\Controller\AuthController',
-            'User\Controller\Profile' => 'User\Controller\ProfileController'
+            'User\Controller\Profile' => 'User\Controller\ProfileController',
+            'User\Controller\Address' => 'User\Controller\AddressController'
 		),
     ),
+
+    'service_manager' => array(
+        'factories' => array(
+            'userService' => function ($serviceManager) {
+                return new Service\UserService();
+            },
+        ),
+    ),	
+
+	'bjyauthorize' => array(
+	    'guards' => array(
+	        'BjyAuthorize\Guard\Controller' => array(
+	            array('controller' => 'User\Controller\Auth', 'roles' => array('guest')),           
+	            array('controller' => 'User\Controller\Profile', 'roles' => array('guest')),            
+	            array('controller' => 'User\Controller\Address', 'roles' => array('guest'))            
+	        ),
+	    ),
+	),
 
     'router' => array(
         'routes' => array(
@@ -33,7 +52,7 @@ return array(
                 ),
                 'child_routes' => array(),
             ),
-            // User routing
+            // User default routing
             'user' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -59,8 +78,32 @@ return array(
                         ),
                     ),
                 ),
-            )
-        ),
+            ),
+            // User RESTful routing
+            'user-rest' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/user',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'User\Controller',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'default' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/:controller',
+                            'constraints' => array(
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            ),
+                            'defaults' => array(
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+		)
     ),
     
     'doctrine' => array(
@@ -78,12 +121,4 @@ return array(
 		)
 	),
 
-	'bjyauthorize' => array(
-	    'guards' => array(
-	        'BjyAuthorize\Guard\Controller' => array(
-	            array('controller' => 'User\Controller\Auth', 'roles' => array('guest')),           
-	            array('controller' => 'User\Controller\Profile', 'roles' => array('guest'))            
-	        ),
-	    ),
-	),
 );

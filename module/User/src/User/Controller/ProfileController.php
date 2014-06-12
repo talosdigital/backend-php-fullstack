@@ -2,7 +2,7 @@
 
 namespace User\Controller;
 
-use Zend\Mvc\Controller\AbstractRestfulController;
+use Zend\Mvc\Controller\AbstractActionController;
 use Application\Entity\Response;
 use User\Entity\User;
 use Zend\View\Model\JsonModel;
@@ -11,7 +11,7 @@ use Zend\View\Model\JsonModel;
  *
  * @SWG\Model(id="profile")
  */
-class ProfileController extends AbstractRestfulController
+class ProfileController extends AbstractActionController
 {
 	/** @SWG\Resource(
     *   resourcePath="profile",

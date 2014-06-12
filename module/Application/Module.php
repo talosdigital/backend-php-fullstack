@@ -46,7 +46,7 @@ class Module
      
     public function handleControllerNotFoundAndControllerInvalidAndRouteNotFound(MvcEvent $e)
     {
-        
+        /*
         $error  = $e->getError();
         $logText =  'Internal server error';
         $statusCode = 500;
@@ -80,7 +80,7 @@ class Module
         echo json_encode(array('error_code' => $errorCode, 'message' => $logText));
         $response->setStatusCode($statusCode);
         $response->sendHeaders();
-        exit;
+        exit;*/
     } 
 
 }

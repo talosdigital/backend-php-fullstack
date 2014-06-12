@@ -12,7 +12,16 @@ namespace User;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
+use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
+use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\ServiceProviderInterface;
+use Zend\ModuleManager\Feature\InitProviderInterface;
+use Zend\ServiceManager\Config;
+use Zend\ServiceManager\ServiceManager;
+
 class Module
+
 {
 	const ERROR_UNEXPECTED = 0;
 	const ERROR_DUPLICATED_EMAIL = 100;
@@ -24,6 +33,7 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
     }
+
 
     public function getConfig()
     {
@@ -40,4 +50,5 @@ class Module
             ),
         );
     }
+
 }
