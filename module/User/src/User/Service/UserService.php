@@ -12,6 +12,10 @@ class UserService extends Service implements ServiceLocatorAwareInterface
 	protected $document = "User\Entity\User";
     protected $services;
 	
+	public function __construct($serviceLocator) {
+        $this->setServiceLocator($serviceLocator);
+	}
+	
  	public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {
         $this->services = $serviceLocator;

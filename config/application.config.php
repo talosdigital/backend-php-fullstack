@@ -10,7 +10,8 @@ return array(
         'ZfcUser',
         'ZfcUserDoctrineMongoODM',
         'BjyAuthorize',
-        'User'
+        'User',
+        'Geolocation'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

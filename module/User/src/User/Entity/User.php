@@ -67,9 +67,6 @@ class User extends Document implements RoleProviderInterface
 	/** @ODM\EmbedOne(targetDocument="User\Entity\User\Facebook") */
 	protected $facebook;
 
-	/** @ODM\EmbedOne(targetDocument="Media\Entity\Picture") */
-	protected $picture;
-
 	/** @ODM\EmbedMany(targetDocument="User\Entity\User\Validation", strategy="set") */
 	protected $validation = array();
 
