@@ -8,11 +8,23 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 /** @ODM\EmbeddedDocument */
 class Address extends Document
 {
-	public function __construct($data = null)
+    public function __construct($data = null)
     {
-		parent::__construct($data);
-	}
-	
+        parent::__construct($data);
+    }
+    
+    /** @ODM\String */
+    protected $label;
+
+    /** @ODM\String */
+    protected $firstname;
+
+    /** @ODM\String */
+    protected $lastname;
+
+    /** @ODM\String */
+    protected $company_name;
+
     /** @ODM\String */
     protected $street;
 

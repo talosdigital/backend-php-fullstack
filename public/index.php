@@ -13,7 +13,7 @@ if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['RE
 // Setup autoloading
 require 'init_autoloader.php';
 
-if (isset($_SERVER['environment']) && $_SERVER['environment'] == 'development') {
+if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER['APPLICATION_ENV'] == 'development') {
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
 	ini_set('log_errors', 1);

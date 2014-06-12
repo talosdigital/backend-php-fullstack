@@ -1,7 +1,7 @@
 <?php 
 $data[] = array(
   "_id"  => new MongoId("50116983724f9a280a000000"),
-  "about_me" => "la la la la la .....la la la la",
+  "about_me" => "afjei la la la la la .....la la la la",
   "addresses" => array(array(
 	    "street" => "173 Leander Road",
 		"city"=> array(
@@ -168,4 +168,30 @@ $data[] = array(
       "validated_at" => new MongoDate(strtotime("2012-12-11 14:09:34"))
     )
   )
+);
+
+$data[] = array(
+  "_id"  => new MongoId("50c266838f604cbb0a000012"),
+  "name" => "Javier test",
+  "email" => "mytest@test.com",
+  "password" => "12345",
+  "role" => "user"
+);
+
+$data[] = array(
+  "_id"  => new MongoId("50c266838f604cbb0a000013"),
+  "name" => "Javier test",
+  "email" => "mytest@notempty.com",
+  "password" => "12345",
+  "role" => "user",
+  "addresses" => array(
+    array(
+      "street" => "Carrer de los Castillejos, 373, 8a",
+      "geolocation"=> NULL,
+      "post_code" => 12345
+      )
+    ),
+  "phonenumbers" => array(
+      array("phonenumber" => "1234567")
+    )
 );
