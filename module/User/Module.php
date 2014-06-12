@@ -35,6 +35,8 @@ class Module
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+        $sharedManager = $eventManager->getSharedManager();
+        //controller not found, invalid, or route is not matched anymore
     }
 
 

@@ -43,4 +43,12 @@ class AbstractAdapter {
 	protected function getUserService(){
         return $this->getServiceLocator()->get('zfcuser_user_service');
     }
+
+    protected function merge(){
+    	
+    }
+
+    protected function unmerge(){
+    	
+    }
 }

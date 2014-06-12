@@ -16,7 +16,7 @@ class AuthController extends AbstractRestfulController
 {
 	/** @SWG\Resource(
     *   resourcePath="auth",
-    *   basePath = "/../../user")
+    *   basePath = "api/user")
     */
 
 	private function loadAdapter() {
@@ -176,9 +176,51 @@ class AuthController extends AbstractRestfulController
      * @SWG\Api(
      *   path="/auth/merge",
      *    @SWG\Operation(
-     *      nickname="logout",
-     *      method = "GET",
-     *      summary="logout action",
+     *      nickname="merge",
+     *      method = "POST",
+     *      summary="merge action",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="adapter",
+     *              paramType="form",
+     *              type="string",
+     *              required=false
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookId",
+     *              paramType="form",
+     *              type="string",
+     *              required=false,
+     *              description = "It's required if adapter = 'facebook'"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookToken",
+     *              paramType="form",
+     *              type="string",
+     *              required=false,
+     *              description = "It's required if adapter = 'facebook'"
+     *          )
+     *   )
+     *  )
+     *)
+     */
+	public function mergeAction(){
+          $data = $this->getRequest()->getPost();
+          
+          $adapter = $this->loadAdapter();
+          $adapter->merge($data);
+
+          return new JsonModel(array("message" => "User account merged"));
+	}
+
+     /**
+     *
+     * @SWG\Api(
+     *   path="/auth/unmerge",
+     *    @SWG\Operation(
+     *      nickname="unmerge",
+     *      method = "POST",
+     *      summary="unmerge action",
      *      @SWG\Parameters(
      *          @SWG\Parameter(
      *              name="adapter",
@@ -190,7 +232,10 @@ class AuthController extends AbstractRestfulController
      *  )
      *)
      */
-	public function mergeAction(){
+     public function unmergeAction(){
+          $adapter = $this->loadAdapter();
+          $adapter->unmerge();
 
-	}
+          return new JsonModel(array("message" => "User account unmerged"));  
+     }
 }

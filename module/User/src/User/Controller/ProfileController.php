@@ -15,7 +15,7 @@ class ProfileController extends AbstractActionController
 {
 	/** @SWG\Resource(
     *   resourcePath="profile",
-    *   basePath = "/../../user")
+    *   basePath = "api/user")
     */
 
 	private function loadEmailAdapter() {
@@ -25,7 +25,7 @@ class ProfileController extends AbstractActionController
 	/**
      *
      * @SWG\Api(
-     *   path="/profile",
+     *   path="/profile/index",
      *   description="Dashboard actions",
      *    @SWG\Operation(
      *      nickname="dashboard",
@@ -40,19 +40,6 @@ class ProfileController extends AbstractActionController
 		return new JsonModel(array("message" => "This is your dashboard."));
 	}
 
-	private function getCurrentUser(){
-		return $this->zfcUserAuthentication()->getIdentity();
-	}
-
-	private function getPasswordRequired(){
-		$user = $this->getCurrentUser();
-		if($user->getPassword()){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
 	/**
      *
      * @SWG\Api(
@@ -148,8 +135,57 @@ class ProfileController extends AbstractActionController
 	public function changeEmailAction(){
 		$user = $this->getCurrentUser();
 		$data = $this->getRequest()->getPost();
-		$adapter = $this->loadEmailAdapter();
+		
+          $adapter = $this->loadEmailAdapter();
 		$adapter->changeEmail($data, $user);
+
 		return new JsonModel(array("message" => "Email changed."));
 	}
+
+     /**
+     *
+     * @SWG\Api(
+     *   path="/profile/social",
+     *    @SWG\Operation(
+     *      nickname="social",
+     *      method = "GET",
+     *         summary = "check merged social networks"
+     *   )
+     *  )
+     *)
+     */
+     public function socialAction(){
+          $social = $this->getSocial();
+          return new JsonModel($social);
+     }
+
+     //Support functions
+
+     private function getSocial(){
+          $user = $this->getCurrentUser();
+          $social = array();
+
+          if($user->getFacebook()->getFacebookId()){
+               $social['facebook'] = true;
+          }
+          else{
+               $social['facebook'] = false;
+          }
+
+          return $social;
+     }
+
+     private function getCurrentUser(){
+          return $this->zfcUserAuthentication()->getIdentity();
+     }
+
+     private function getPasswordRequired(){
+          $user = $this->getCurrentUser();
+          if($user->getPassword()){
+               return true;
+          }
+          else{
+               return false;
+          }
+     }
 }

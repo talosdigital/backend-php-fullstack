@@ -31,7 +31,7 @@ return array(
 	    'guards' => array(
 	        'BjyAuthorize\Guard\Controller' => array(
 	            array('controller' => 'User\Controller\Auth', 'roles' => array('guest')),           
-	            array('controller' => 'User\Controller\Profile', 'roles' => array('guest')),            
+	            array('controller' => 'User\Controller\Profile', 'roles' => array('user')),            
 	            array('controller' => 'User\Controller\Address', 'roles' => array('guest'))            
 	        ),
 	    ),

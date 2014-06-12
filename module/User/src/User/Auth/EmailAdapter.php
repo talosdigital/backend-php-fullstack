@@ -37,6 +37,7 @@ class EmailAdapter extends AbstractAdapter implements IAdapter{
 			$user->setName($request->get('name'));
             $user->setRole('user');
             $service->getUserMapper()->update($user);
+            $this->getAuthPlugin()->getAuthService()->getStorage()->write($user);
 			return $user;
         }
 		else {

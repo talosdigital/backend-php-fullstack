@@ -3,6 +3,7 @@
 namespace User\Auth;
 
 use User\Entity\User as User;
+use User\Entity\User\Facebook as FacebookDocument;
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
@@ -15,25 +16,33 @@ use Facebook\GraphUser;
 
 class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
+	public function initialize(){
+		FacebookSession::setDefaultApplication('324410064378636', 'c4f122cd43915686cca6c7c4b1eaef6e');
+	}
+
 	public function signup($request) {
 		$service = $this->getUserService();
-		FacebookSession::setDefaultApplication('324410064378636', 'c4f122cd43915686cca6c7c4b1eaef6e');
+		$this->initialize();
 		$facebookUser = $this->getFacebookUser($request->get('facebookToken'));
-	    $user = $this->getUserByEmail($facebookUser['email']);
+	    $user = $this->getUserByEmail($facebookUser->getEmail());
+
 	    if(empty($user)){
 	        try{
+
 		        $user = new User();
-		        $user->setEmail($facebookUser['email']);
-		        $user->setName($facebookUser['name']);
-		        $user->setFacebookId($request->get('facebookId'));
+		        $user->setEmail($facebookUser->getEmail());
+		        $user->setName($facebookUser->getUsername());
+
+		        $user->setFacebook($facebookUser);
+		        
 		        $user->setPassword(null);
 		        $user->setRole('user');
 		        $service->getUserMapper()->insert($user);
-		       
+
 		        $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
 		        $this->getAuthPlugin()->getAuthService()->clearIdentity();
 		        $this->getAuthPlugin()->getAuthService()->getStorage()->write($user);
-
+				
 		        return true;
 		    }
 		    catch (Exception $ex){
@@ -41,9 +50,9 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 		    }
 	    }
 	    else{
-	    	$result = $user->getFacebookId();
+	    	$result = $user->getFacebook();
 	        if(empty($result)) { 
-	            $this->mergeFacebook($user, $request->get('facebookId'));
+	            $this->mergeFacebook($user, $request->get('facebookToken'));
 			}
 	        $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
 	        $this->getAuthPlugin()->getAuthService()->clearIdentity();
@@ -73,21 +82,35 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
     private function getFacebookUser($token){
         $session = new FacebookSession($token);
+        $facebookDocument = new FacebookDocument();
+        
         $request = new FacebookRequest($session, 'GET', '/me');
         $response = $request->execute();
         $graph = $response->getGraphObject(GraphUser::className());
 		$facebookArray = $graph->asArray();
-        $userRequest = array(
-        	'name' => $graph->getName(), 
-        	'email' => $facebookArray['email'], 
-        	'facebook_id' => $token
-        	);
-        return $userRequest;
+		
+		$facebookDocument->setFacebookId($facebookArray['id']);
+		$facebookDocument->setUsername($graph->getName());
+		$facebookDocument->setEmail($facebookArray['email']);
+		$facebookDocument->setPicture("https://graph.facebook.com/".$facebookArray['id']."/picture");
+
+        return $facebookDocument;
     }
 
-    private function mergeFacebook($user, $facebookId){
-        $user->setFacebookId($facebookId);
+    public function merge($data){
+    	$this->initialize();
+    	$user = $this->getAuthPlugin()->getIdentity();
+    	$facebookToken = $data->get('facebookToken');
+    	$facebookUser = $this->getFacebookUser($facebookToken);
+
+        $user->setFacebook($facebookUser);
         $this->getUserService()->getUserMapper()->update($user);
+    }
+
+    public function unmerge(){
+    	$user = $this->getAuthPlugin()->getIdentity();
+    	$user->setFacebook(new FacebookDocument());
+    	$this->getUserService()->getUserMapper()->update($user);
     }
 
 }

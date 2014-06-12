@@ -22,6 +22,7 @@ class Module
         $eventManager = $e->getApplication()->getEventManager();
         $sharedManager = $eventManager->getSharedManager();
         //controller not found, invalid, or route is not matched anymore
+
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, 
                array($this,
               'handleControllerNotFoundAndControllerInvalidAndRouteNotFound' ), 100);
@@ -42,15 +43,14 @@ class Module
             ),
         );
     }
+
      
-     
-    public function handleControllerNotFoundAndControllerInvalidAndRouteNotFound(MvcEvent $e)
-    {
-        /*
+    public function handleControllerNotFoundAndControllerInvalidAndRouteNotFound(MvcEvent $e){
         $error  = $e->getError();
         $logText =  'Internal server error';
         $statusCode = 500;
 		$errorCode = 0;
+
         if ($error == Application::ERROR_CONTROLLER_NOT_FOUND) {
             //there is no controller named $e->getRouteMatch()->getParam('controller')
             $logText =  'The requested controller '
@@ -79,12 +79,16 @@ class Module
             $logText =  'The requested URL could not be matched by routing.';
             $statusCode = 404;
         }
+        elseif ($error == "error-unauthorized-controller"){
+            $logText =  'Unauthorized controller.';
+            $statusCode = 403;
+        }
 
         $response = $e->getResponse();
         echo json_encode(array('error_code' => $errorCode, 'message' => $logText));
         $response->setStatusCode($statusCode);
         $response->sendHeaders();
-        exit;*/
+        exit;
     } 
 
 }
