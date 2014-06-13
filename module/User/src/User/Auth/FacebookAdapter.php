@@ -16,8 +16,11 @@ use Facebook\GraphUser;
 
 class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
+	const TOKEN = '324410064378636';
+	const SECRET = 'c4f122cd43915686cca6c7c4b1eaef6e';
+
 	public function initialize(){
-		FacebookSession::setDefaultApplication('324410064378636', 'c4f122cd43915686cca6c7c4b1eaef6e');
+		FacebookSession::setDefaultApplication($this::TOKEN, $this::SECRET);
 	}
 
 	public function signup($request) {

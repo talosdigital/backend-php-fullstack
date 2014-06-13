@@ -28,34 +28,32 @@ class AddressTest extends AbstractTestCase {
 		$this->userService = new UserService($this->getServiceManager());
 	}
 
-	public function testCreateAddress(){
-		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-
+	public function createAddress(){
 		$data = array();
 		$data['street'] = $this::STREET;
 		$data['post_code'] = $this::POST_CODE;
 		$data['geolocation'] = $this::GEOLOCATION;
 		$address = new Address($data);	
-		$addresses[0] = $address;
+
+		return $address;
+	}
+
+	public function testCreateAddress(){
+		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
+		$addresses[0] = $this->createAddress();
 
 		$user->setAddresses($addresses);
 		$this->userService->save($user);
 		$addresses = $user->getAddresses();
 
-		$this->assertEquals($data['street'], $addresses[0]->getStreet());
+		$this->assertEquals($this::STREET, $addresses[0]->getStreet());
 	}
 
 	public function testCreateTwoOrMoreAddresses(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-
-		$data = array();
-		$data['street'] = $this::STREET;
-		$data['post_code'] = $this::POST_CODE;
-		$data['geolocation'] = $this::GEOLOCATION;
-		$address = new Address($data);	
 		
 		for ($i=0; $i < $this::ADDRESSES_QUANTITY; $i++) { 
-			$addresses[$i] = $address;
+			$addresses[$i] = $this->createAddress();
 		}
 		
 		$user->setAddresses($addresses);
@@ -77,13 +75,8 @@ class AddressTest extends AbstractTestCase {
 
 	public function testModifyAddress(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL_WN_EMPTY_ADDRESSES));
-		$data = array();
-		$data['street'] = $this::STREET;
-		$data['post_code'] = $this::POST_CODE;
-		$data['geolocation'] = $this::GEOLOCATION;
-		$address = new Address($data);	
 
-		$addresses[0] = $address;
+		$addresses[0] = $this->createAddress();
 		
 		$user->setAddresses($addresses);
 		$this->userService->save($user);

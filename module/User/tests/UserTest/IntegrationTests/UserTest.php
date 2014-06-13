@@ -25,8 +25,7 @@ class UserTest extends AbstractTestCase {
 
 		$this->userService = new UserService($this->getServiceManager());
 	}
-
-
+	
 	public function testCreateUser() {
 		$data = array();
 		$data['email'] = $this::EMAIL;

@@ -92,9 +92,9 @@ class UserEntityUserHydrator implements HydratorInterface
         $hydratedData['phonenumbers'] = $return;
 
         /** @EmbedOne */
-        if (isset($data['facebook'])) {
-            $embeddedDocument = $data['facebook'];
-            $className = $this->unitOfWork->getClassNameForAssociation($this->class->fieldMappings['facebook'], $embeddedDocument);
+        if (isset($data['oauth'])) {
+            $embeddedDocument = $data['oauth'];
+            $className = $this->unitOfWork->getClassNameForAssociation($this->class->fieldMappings['oauth'], $embeddedDocument);
             $embeddedMetadata = $this->dm->getClassMetadata($className);
             $return = $embeddedMetadata->newInstance();
 
@@ -102,10 +102,10 @@ class UserEntityUserHydrator implements HydratorInterface
             $embeddedId = $embeddedMetadata->identifier && isset($embeddedData[$embeddedMetadata->identifier]) ? $embeddedData[$embeddedMetadata->identifier] : null;
 
             $this->unitOfWork->registerManaged($return, $embeddedId, $embeddedData);
-            $this->unitOfWork->setParentAssociation($return, $this->class->fieldMappings['facebook'], $document, 'facebook');
+            $this->unitOfWork->setParentAssociation($return, $this->class->fieldMappings['oauth'], $document, 'oauth');
 
-            $this->class->reflFields['facebook']->setValue($document, $return);
-            $hydratedData['facebook'] = $return;
+            $this->class->reflFields['oauth']->setValue($document, $return);
+            $hydratedData['oauth'] = $return;
         }
 
         /** @Many */
