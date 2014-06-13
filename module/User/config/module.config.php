@@ -30,7 +30,7 @@ return array(
 	'bjyauthorize' => array(
 	    'guards' => array(
 	        'BjyAuthorize\Guard\Controller' => array(
-	            array('controller' => 'User\Controller\Auth', 'roles' => array('guest')),           
+	            array('controller' => 'User\Controller\Auth', 'roles' => array('user', 'guest')),           
 	            array('controller' => 'User\Controller\Profile', 'roles' => array('user')),            
 	            array('controller' => 'User\Controller\Address', 'roles' => array('guest'))            
 	        ),

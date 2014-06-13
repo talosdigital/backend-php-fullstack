@@ -85,9 +85,15 @@ class Module
         }
 
         $response = $e->getResponse();
-        echo json_encode(array('error_code' => $errorCode, 'message' => $logText));
         $response->setStatusCode($statusCode);
+        
+        echo json_encode(array('error_code' => $errorCode, 'message' => $logText));
+        $headers = $response->getHeaders();
+        
+        $headers->addHeaderLine('Content-Type: application/json');
+        $response->setHeaders($headers);
         $response->sendHeaders();
+        
         exit;
     } 
 

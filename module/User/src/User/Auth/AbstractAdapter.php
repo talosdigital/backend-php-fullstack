@@ -2,6 +2,8 @@
 
 namespace User\Auth;
 
+use User\Facade\AuthFacade;
+
 class AbstractAdapter {
 		
 	private $serviceLocator;
@@ -50,5 +52,15 @@ class AbstractAdapter {
 
     protected function unmerge(){
     	
+    }
+
+    public function getList(){
+    	$user = $this->getAuthService()->getIdentity();
+    	if($user){
+            return AuthFacade::get($user);
+        }
+       	else{
+           throw new \Exception("User is not logged in", \User\Module::ERROR_NOT_LOGGED_IN);
+       }
     }
 }

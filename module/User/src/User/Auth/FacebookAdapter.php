@@ -3,7 +3,8 @@
 namespace User\Auth;
 
 use User\Entity\User as User;
-use User\Entity\User\Facebook as FacebookDocument;
+use User\Entity\User\Oauth;
+use User\Entity\User\Oauth\Facebook as FacebookDocument;
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
@@ -34,9 +35,10 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
 		        $user = new User();
 		        $user->setEmail($facebookUser->getEmail());
-		        $user->setName($facebookUser->getUsername());
+		        $user->setName($facebookUser->getFullName());
 
-		        $user->setFacebook($facebookUser);
+		        $user->setOauth(new Oauth());
+		        $user->getOauth()->setFacebook($facebookUser);
 		        
 		        $user->setPassword(null);
 		        $user->setRole('user');
@@ -53,9 +55,9 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 		    }
 	    }
 	    else{
-	    	$result = $user->getFacebook();
+	    	$result = $user->getOauth()->getFacebook();
 	        if(empty($result)) { 
-	            $this->mergeFacebook($user, $request->get('facebookToken'));
+	            $this->merge($request);
 			}
 	        $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
 	        $this->getAuthPlugin()->getAuthService()->clearIdentity();
@@ -76,9 +78,9 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 	private function getUserByEmail($email){
         $dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
         $query = $dm->getRepository($this->getDocument());
-        $userDocument = $query->findBy(array('email' => $email));
+        $userDocument = $query->findOneBy(array('email' => $email));
         if(!empty($userDocument))
-            return $userDocument[0];
+            return $userDocument;
         else
             return null;
     }
@@ -92,8 +94,8 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
         $graph = $response->getGraphObject(GraphUser::className());
 		$facebookArray = $graph->asArray();
 		
-		$facebookDocument->setFacebookId($facebookArray['id']);
-		$facebookDocument->setUsername($graph->getName());
+		$facebookDocument->setId($facebookArray['id']);
+		$facebookDocument->setFullName($graph->getName());
 		$facebookDocument->setEmail($facebookArray['email']);
 		$facebookDocument->setPicture("https://graph.facebook.com/".$facebookArray['id']."/picture");
 
@@ -106,13 +108,13 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     	$facebookToken = $data->get('facebookToken');
     	$facebookUser = $this->getFacebookUser($facebookToken);
 
-        $user->setFacebook($facebookUser);
+        $user->getOauth()->setFacebook($facebookUser);
         $this->getUserService()->getUserMapper()->update($user);
     }
 
     public function unmerge(){
     	$user = $this->getAuthPlugin()->getIdentity();
-    	$user->setFacebook(new FacebookDocument());
+    	$user->getOauth()->removeFacebook();
     	$this->getUserService()->getUserMapper()->update($user);
     }
 

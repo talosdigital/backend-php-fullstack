@@ -2,7 +2,7 @@
 
 namespace User\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Controller\AbstractRestfulController;
 use Application\Entity\Response;
 use User\Entity\User;
 use Zend\View\Model\JsonModel;
@@ -11,7 +11,7 @@ use Zend\View\Model\JsonModel;
  *
  * @SWG\Model(id="profile")
  */
-class ProfileController extends AbstractActionController
+class ProfileController extends AbstractRestfulController
 {
 	/** @SWG\Resource(
     *   resourcePath="profile",
@@ -25,7 +25,7 @@ class ProfileController extends AbstractActionController
 	/**
      *
      * @SWG\Api(
-     *   path="/profile/index",
+     *   path="/profile",
      *   description="Dashboard actions",
      *    @SWG\Operation(
      *      nickname="dashboard",
@@ -35,8 +35,8 @@ class ProfileController extends AbstractActionController
      *  )
      *)
      */
+
 	public function indexAction() {
-	
 		return new JsonModel(array("message" => "This is your dashboard."));
 	}
 

@@ -7,7 +7,6 @@ use Application\Entity\Response;
 use User\Entity\User;
 use Zend\View\Model\JsonModel;
 use Swagger\Swagger;
-
 /**
  *
  * @SWG\Model(id="auth")
@@ -31,6 +30,21 @@ class AuthController extends AbstractRestfulController
 		
 		return $adapter;
 	}
+
+     /**
+     *
+     * @SWG\Api(
+     *   path="/auth",
+     *    @SWG\Operation(
+     *      nickname="get_user",
+     *      method = "GET",
+     *      summary="Get user info as array"
+     *   )
+     *  )
+     */
+     public function getList(){
+          return new JsonModel($this->loadAdapter()->getList());    
+     }
 
 	/**
      *
@@ -162,7 +176,6 @@ class AuthController extends AbstractRestfulController
      *      summary="logout action"
      *   )
      *  )
-     *)
      */
 	public function logoutAction() {
 		$adapter = $this->loadAdapter();
