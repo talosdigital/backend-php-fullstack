@@ -2,13 +2,15 @@
 namespace IntegrationTests\Tests;
 
 use IntegrationTests\AbstractTestCase;
-use User\Entity\User\Oauth;
+use User\Entity\User\Oauth\Oauth;
 use User\Entity\User\Oauth\Facebook;
 use User\Entity\User;
 
 use User\Service\UserService;
 
 class FacebookTest extends AbstractTestCase {
+
+	const ADAPTER = "facebook";
 
 	const ID = '1234567';
 	const EMAIL = 'mytest@test.com';
@@ -31,27 +33,27 @@ class FacebookTest extends AbstractTestCase {
 	}
 
 	public function createOauthFacebook(){
-		$Oauth = new Oauth();
+
 		$facebook = new Facebook();
 		$facebook->setId($this::ID);
-		$facebook->setFullName($this::FULL_NAME);
 		$facebook->setEmail($this::EMAIL);
 		$facebook->setPicture($this::PICTURE);
-		$Oauth->setFacebook($facebook);
-		return $Oauth;
+		
+		return $facebook;
 	}
 
 	public function testCreateFacebook(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-		$user->setOauth($this->createOauthFacebook());
+		$user->getOauth()->add($this->createOauthFacebook());
 		
 		$this->userService->save($user);
 		$nUser = $this->userService->findOneBy(array('email' => $this::EMAIL));
 
-		$this->assertEquals($this::EMAIL, $nUser->getOauth()->getFacebook()->getEmail());
-		$this->assertEquals($this::ID, $nUser->getOauth()->getFacebook()->getId());
-		$this->assertEquals($this::FULL_NAME, $nUser->getOauth()->getFacebook()->getFullName());
-		$this->assertEquals($this::PICTURE, $nUser->getOauth()->getFacebook()->getPicture());
+		$Oauth = $nUser->getOauth();
+
+		$this->assertEquals($this::EMAIL, $Oauth[0]->getEmail());
+		$this->assertEquals($this::ID, $Oauth[0]->getId());
+		$this->assertEquals($this::PICTURE, $Oauth[0]->getPicture());
 	}
 
 	public function testListFacebook(){
@@ -60,34 +62,37 @@ class FacebookTest extends AbstractTestCase {
 
 	public function testModifyFacebook(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-		$user->setOauth($this->createOauthFacebook());
+		$user->getOauth()->add($this->createOauthFacebook());
 		
 		$this->userService->save($user);
 		$nUser = $this->userService->findOneBy(array('email' => $this::EMAIL));
 
-		$nUser->getOauth()->getFacebook()->setId($this::EDIT_ID);
-		$nUser->getOauth()->getFacebook()->setEmail($this::EDIT_EMAIL);
-		$nUser->getOauth()->getFacebook()->setFullName($this::EDIT_FULL_NAME);
-		$nUser->getOauth()->getFacebook()->setPicture($this::EDIT_PICTURE);
+		$facebook = $nUser->getOauthAdapter($this::ADAPTER);
 
-		$this->userService->save($nUser);
+		$facebook->setId($this::EDIT_ID);
+		$facebook->setEmail($this::EDIT_EMAIL);
+		$facebook->setPicture($this::EDIT_PICTURE);
+		
+		$this->userService->save($facebook);
 
-		$this->assertEquals($this::EDIT_EMAIL, $nUser->getOauth()->getFacebook()->getEmail());
-		$this->assertEquals($this::EDIT_ID, $nUser->getOauth()->getFacebook()->getId());
-		$this->assertEquals($this::EDIT_FULL_NAME, $nUser->getOauth()->getFacebook()->getFullName());
-		$this->assertEquals($this::EDIT_PICTURE, $nUser->getOauth()->getFacebook()->getPicture());
+		$facebook = $nUser->getOauthAdapter($this::ADAPTER);
+
+		$this->assertEquals($this::EDIT_EMAIL, $facebook->getEmail());
+		$this->assertEquals($this::EDIT_ID, $facebook->getId());
+		$this->assertEquals($this::EDIT_PICTURE, $facebook->getPicture());
 	}
 
 	public function testDeleteFacebook(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-		$user->setOauth($this->createOauthFacebook());
+		$user->getOauth()->add($this->createOauthFacebook());
 		
 		$this->userService->save($user);
 
-		$user->getOauth()->removeFacebook();
+		$fb = $user->getOauthAdapter($this::ADAPTER);
+
+		$user->getOauth()->removeElement($fb);
 		$this->userService->save($user);
 
-		$facebook  = $user->getOauth()->getFacebook();
-		$this->assertEquals(null, $facebook);
+		$this->assertEquals(0, count($user->getOauth()));
 	}
 }

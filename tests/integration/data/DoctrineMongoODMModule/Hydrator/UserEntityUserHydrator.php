@@ -91,22 +91,17 @@ class UserEntityUserHydrator implements HydratorInterface
         $this->class->reflFields['phonenumbers']->setValue($document, $return);
         $hydratedData['phonenumbers'] = $return;
 
-        /** @EmbedOne */
-        if (isset($data['oauth'])) {
-            $embeddedDocument = $data['oauth'];
-            $className = $this->unitOfWork->getClassNameForAssociation($this->class->fieldMappings['oauth'], $embeddedDocument);
-            $embeddedMetadata = $this->dm->getClassMetadata($className);
-            $return = $embeddedMetadata->newInstance();
-
-            $embeddedData = $this->dm->getHydratorFactory()->hydrate($return, $embeddedDocument, $hints);
-            $embeddedId = $embeddedMetadata->identifier && isset($embeddedData[$embeddedMetadata->identifier]) ? $embeddedData[$embeddedMetadata->identifier] : null;
-
-            $this->unitOfWork->registerManaged($return, $embeddedId, $embeddedData);
-            $this->unitOfWork->setParentAssociation($return, $this->class->fieldMappings['oauth'], $document, 'oauth');
-
-            $this->class->reflFields['oauth']->setValue($document, $return);
-            $hydratedData['oauth'] = $return;
+        /** @Many */
+        $mongoData = isset($data['oauth']) ? $data['oauth'] : null;
+        $return = new \Doctrine\ODM\MongoDB\PersistentCollection(new \Doctrine\Common\Collections\ArrayCollection(), $this->dm, $this->unitOfWork);
+        $return->setHints($hints);
+        $return->setOwner($document, $this->class->fieldMappings['oauth']);
+        $return->setInitialized(false);
+        if ($mongoData) {
+            $return->setMongoData($mongoData);
         }
+        $this->class->reflFields['oauth']->setValue($document, $return);
+        $hydratedData['oauth'] = $return;
 
         /** @Many */
         $mongoData = isset($data['validation']) ? $data['validation'] : null;

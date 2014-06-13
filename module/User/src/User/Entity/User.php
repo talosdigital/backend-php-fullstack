@@ -16,6 +16,7 @@ class User extends Document implements RoleProviderInterface
 		$this->addresses = new ArrayCollection();
 		$this->phonenumbers = new ArrayCollection();
 		$this->validation = new ArrayCollection();
+        $this->oauth = new ArrayCollection();
 	}
 	
 	/**
@@ -64,8 +65,8 @@ class User extends Document implements RoleProviderInterface
 	/** @ODM\EmbedMany(targetDocument="User\Entity\User\Phonenumber") */
 	protected $phonenumbers = array();
 
-	/** @ODM\EmbedOne(targetDocument="User\Entity\User\Oauth") */
-	protected $oauth;
+	/** @ODM\EmbedMany(targetDocument="User\Entity\User\Oauth\Oauth") */
+	protected $oauth = array();
 
 	/** @ODM\EmbedMany(targetDocument="User\Entity\User\Validation", strategy="set") */
 	protected $validation = array();
@@ -75,4 +76,14 @@ class User extends Document implements RoleProviderInterface
 		
 	}
 
+    public function getOauthAdapter($adapter){
+        $OauthTmp = $this->getOauth();
+        foreach ($OauthTmp as $Oauth) {
+            $adapterTmp = $Oauth->getAdapter();
+            if($adapterTmp==$adapter){
+                return $Oauth;
+            }
+        }
+        return null;
+    }
 }

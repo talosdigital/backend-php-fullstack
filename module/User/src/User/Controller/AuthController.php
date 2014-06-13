@@ -31,21 +31,6 @@ class AuthController extends AbstractRestfulController
 		return $adapter;
 	}
 
-     /**
-     *
-     * @SWG\Api(
-     *   path="/auth",
-     *    @SWG\Operation(
-     *      nickname="get_user",
-     *      method = "GET",
-     *      summary="Get user info as array"
-     *   )
-     *  )
-     */
-     public function getList(){
-          return new JsonModel($this->loadAdapter()->getList());    
-     }
-
 	/**
      *
      * @SWG\Api(
@@ -55,47 +40,64 @@ class AuthController extends AbstractRestfulController
      *    @SWG\Operation(
      *      nickname="singup",
      *      method = "POST",
-     *      summary="signup action",
+     *      summary="signup action (Email adapter)",
      *      @SWG\Parameters(
-     *          @SWG\Parameter(
-     *              name="adapter",
-     *              paramType="form",
-     *              type="string",
-     *              required=false,
-     *				description="It takes the adapter needed ('facebook' for facebook adapter, null for email adapter)"
-     *          ),
-     *          @SWG\Parameter(
-     *              name="facebookId",
-     *              paramType="form",
-     *              type="string",
-     *              required=false
-     *          ),
-     *          @SWG\Parameter(
-     *              name="facebookToken",
-     *              paramType="form",
-     *              type="string",
-     *              required=false
-     *          ),
      *          @SWG\Parameter(
      *              name="email",
      *              paramType="form",
      *              type="string",
-     *              required=false,
+     *              required=true,
      *				description = "It's not required only if adapter is not null"
      *          ),
      *          @SWG\Parameter(
      *              name="password",
      *              paramType="form",
      *              type="string",
-     *              required=false,
+     *              required=true,
      *				description = "It's not required only if adapter is not null"
      *          ),
      *          @SWG\Parameter(
      *              name="name",
      *              paramType="form",
      *              type="string",
-     *              required=false,
+     *              required=true,
      *				description = "It's the display name of the user, and it is not required only if adapter is not null"
+     *          )
+     *      )
+     *   )
+     *  )
+     *)
+     */
+
+     /**
+     *
+     * @SWG\Api(
+     *   path="/auth/signup",
+     *   
+     *   description="Auth logic (signup, login and logout)",
+     *    @SWG\Operation(
+     *      nickname="singup",
+     *      method = "POST",
+     *      summary="signup action (Facebook adapter)",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="adapter",
+     *              paramType="form",
+     *              type="string",
+     *              required=true,
+     *              defaultValue = "facebook"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookId",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookToken",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
      *          )
      *      )
      *   )
@@ -118,40 +120,55 @@ class AuthController extends AbstractRestfulController
      *    @SWG\Operation(
      *      nickname="login",
      *      method = "POST",
-     *      summary="login action",
+     *      summary="login action (Email Adapter)",
      *      @SWG\Parameters(
-     *          @SWG\Parameter(
-     *              name="adapter",
-     *              paramType="form",
-     *              type="string",
-     *              required=false,
-     *				description="It takes the adapter needed ('facebook' for facebook adapter, null for email adapter)"
-     *          ),
-     *          @SWG\Parameter(
-     *              name="facebookId",
-     *              paramType="form",
-     *              type="string",
-     *              required=false
-     *          ),
-     *          @SWG\Parameter(
-     *              name="facebookToken",
-     *              paramType="form",
-     *              type="string",
-     *              required=false
-     *          ),
      *          @SWG\Parameter(
      *              name="email",
      *              paramType="form",
      *              type="string",
-     *              required=false,
+     *              required=true,
      *				description = "It's not required if adapter is not null"
      *          ),
      *          @SWG\Parameter(
      *              name="password",
      *              paramType="form",
      *              type="string",
-     *              required=false,
+     *              required=true,
      *				description = "It's not required if adapter is not null"
+     *          )
+     *      )
+     *   )
+     *  )
+     *)
+     */
+
+          /**
+     *
+     * @SWG\Api(
+     *   path="/auth/login",
+     *    @SWG\Operation(
+     *      nickname="login",
+     *      method = "POST",
+     *      summary="login action (Facebook adapter)",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="adapter",
+     *              paramType="form",
+     *              type="string",
+     *              required=true,
+     *              defaultValue = "facebook"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookId",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookToken",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
      *          )
      *      )
      *   )

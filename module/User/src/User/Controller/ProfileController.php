@@ -142,6 +142,10 @@ class ProfileController extends AbstractRestfulController
 		return new JsonModel(array("message" => "Email changed."));
 	}
 
+     public function getList(){
+          return new JsonModel($this->loadEmailAdapter()->getList());    
+     }
+
      //Support functions
 
      private function getCurrentUser(){

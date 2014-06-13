@@ -2,10 +2,7 @@
 namespace IntegrationTests\Tests;
 
 use IntegrationTests\AbstractTestCase;
-use DateTime;
-
 use User\Entity\User;
-
 use User\Service\UserService;
 
 class UserTest extends AbstractTestCase {

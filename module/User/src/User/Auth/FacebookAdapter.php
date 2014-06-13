@@ -3,7 +3,7 @@
 namespace User\Auth;
 
 use User\Entity\User as User;
-use User\Entity\User\Oauth;
+use User\Entity\User\Oauth\Oauth;
 use User\Entity\User\Oauth\Facebook as FacebookDocument;
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
@@ -19,6 +19,8 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
 	const TOKEN = '324410064378636';
 	const SECRET = 'c4f122cd43915686cca6c7c4b1eaef6e'; 
+	const ADAPTER = "facebook";
+	private $full_name;
 
 	public function initialize(){
 		FacebookSession::setDefaultApplication($this::TOKEN, $this::SECRET);
@@ -35,10 +37,9 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
 		        $user = new User();
 		        $user->setEmail($facebookUser->getEmail());
-		        $user->setName($facebookUser->getFullName());
+		        $user->setName($this->full_name);
 
-		        $user->setOauth(new Oauth());
-		        $user->getOauth()->setFacebook($facebookUser);
+		        $user->getOauth()->add($facebookUser);
 		        
 		        $user->setPassword(null);
 		        $user->setRole('user');
@@ -62,7 +63,7 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 	    	
 	    	$this->setCurrentUser($user);
 
-	    	$result = $user->getOauth()->getFacebook();
+	    	$result = $user->getOauthAdapter($this::ADAPTER);
 	        if(empty($result)) { 
 	            $this->merge($request);
 			}
@@ -95,7 +96,7 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     private function getUserByFacebook($facebook_id){
     	$dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
         $query = $dm->getRepository($this->getDocument());
-        $user = $query->findOneBy(array('oauth.facebook.id' => $facebook_id));
+        $user = $query->findOneBy(array('oauth.id' => $facebook_id, 'oauth.adapter' => 'facebook'));
         if(!empty($user))
             return $user;
         else
@@ -112,10 +113,9 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 		$facebookArray = $graph->asArray();
 		
 		$facebookDocument->setId($facebookArray['id']);
-		$facebookDocument->setFullName($graph->getName());
 		$facebookDocument->setEmail($facebookArray['email']);
 		$facebookDocument->setPicture("https://graph.facebook.com/".$facebookArray['id']."/picture");
-
+		$this->full_name = $graph->getName();
         return $facebookDocument;
     }
 
@@ -136,20 +136,16 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     		throw new \Exception("This facebook account is already merged", \User\Module::ERROR_FACEBOOK_ALREADY_MERGED);	
     	}
 
-    	$oauth = $user->getOauth();
-    	if(!$oauth){
-    		$oauth = new Oauth();
-    	}
-
-    	$oauth->setFacebook($facebookUser);
-        $user->setOauth($oauth);
-
+    	$user->getOauth()->add($facebookUser);
         $this->getUserService()->getUserMapper()->update($user);
     }
 
     public function unmerge(){
     	$user = $this->getAuthPlugin()->getIdentity();
-    	$user->getOauth()->removeFacebook();
+    	$facebook = $user->getOauthAdapter($this::ADAPTER);
+
+    	$user->getOauth()->removeElement($facebook);
+
     	$this->getUserService()->getUserMapper()->update($user);
     }
 
