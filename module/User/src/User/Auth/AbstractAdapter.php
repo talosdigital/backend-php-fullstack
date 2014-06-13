@@ -8,6 +8,7 @@ class AbstractAdapter {
 		
 	private $serviceLocator;
 	private $document = "User\Entity\User";
+	protected $currentUser;
 
 	public function __construct($serviceLocator) {
 		$this->serviceLocator = $serviceLocator;		
@@ -62,5 +63,13 @@ class AbstractAdapter {
        	else{
            throw new \Exception("User is not logged in", \User\Module::ERROR_NOT_LOGGED_IN);
        }
+    }
+
+    protected function setCurrentUser($currentUser){
+    	$this->currentUser = $currentUser;
+    }
+
+    protected function getCurrentUser(){
+    	return $this->currentUser;
     }
 }

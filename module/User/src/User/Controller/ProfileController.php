@@ -93,7 +93,7 @@ class ProfileController extends AbstractRestfulController
 		$user = $this->getCurrentUser();
 
 		if($isGet){
-			$passwordRequired = $this->getPasswordRequired();
+			$passwordRequired = \User\Facade\ProfileFacade::getPasswordRequired($this->getCurrentUser());
 			return new JsonModel(array("passwordRequired" => $passwordRequired));	
 		}
 
@@ -142,50 +142,9 @@ class ProfileController extends AbstractRestfulController
 		return new JsonModel(array("message" => "Email changed."));
 	}
 
-     /**
-     *
-     * @SWG\Api(
-     *   path="/profile/social",
-     *    @SWG\Operation(
-     *      nickname="social",
-     *      method = "GET",
-     *         summary = "check merged social networks"
-     *   )
-     *  )
-     *)
-     */
-     public function socialAction(){
-          $social = $this->getSocial();
-          return new JsonModel($social);
-     }
-
      //Support functions
-
-     private function getSocial(){
-          $user = $this->getCurrentUser();
-          $social = array();
-
-          if($user->getFacebook()->getFacebookId()){
-               $social['facebook'] = true;
-          }
-          else{
-               $social['facebook'] = false;
-          }
-
-          return $social;
-     }
 
      private function getCurrentUser(){
           return $this->zfcUserAuthentication()->getIdentity();
-     }
-
-     private function getPasswordRequired(){
-          $user = $this->getCurrentUser();
-          if($user->getPassword()){
-               return true;
-          }
-          else{
-               return false;
-          }
      }
 }

@@ -29,6 +29,7 @@ class Module
     const ERROR_CHANGE_PASSWORD_FAILED = 300;
     const ERROR_CHANGE_EMAIL_FAILED = 400;
     const ERROR_FACEBOOK_REGISTER_FAILED = 500;
+    const ERROR_FACEBOOK_ALREADY_MERGED = 501;
     const ERROR_NOT_LOGGED_IN = 600;
 	
     public function onBootstrap(MvcEvent $e)
