@@ -140,13 +140,19 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
         $this->getUserService()->getUserMapper()->update($user);
     }
 
-    public function unmerge(){
+    public function unmerge($data){
+    	$this->initialize();
+
     	$user = $this->getAuthPlugin()->getIdentity();
-    	$facebook = $user->getOauthAdapter($this::ADAPTER);
-
-    	$user->getOauth()->removeElement($facebook);
-
+    	$fb = $user->getOauthAdapter($this::ADAPTER);
+    	$user->getOauth()->removeElement($fb);
     	$this->getUserService()->getUserMapper()->update($user);
+
+    	$token = $data->get('facebookToken');
+
+    	$session = new FacebookSession($token);
+    	$request = new FacebookRequest($session, 'DELETE', '/me/permissions');
+    	$response = $request->execute();
     }
 
 }

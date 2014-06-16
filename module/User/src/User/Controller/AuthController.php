@@ -214,7 +214,7 @@ class AuthController extends AbstractRestfulController
      *              name="adapter",
      *              paramType="form",
      *              type="string",
-     *              required=false
+     *              required=true
      *          ),
      *          @SWG\Parameter(
      *              name="facebookId",
@@ -256,6 +256,13 @@ class AuthController extends AbstractRestfulController
      *              name="adapter",
      *              paramType="form",
      *              type="string",
+     *              required=true,
+     *              defaultValue = "facebook"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="facebookToken",
+     *              paramType="form",
+     *              type="string",
      *              required=false
      *          )
      *   )
@@ -263,8 +270,9 @@ class AuthController extends AbstractRestfulController
      *)
      */
      public function unmergeAction(){
+          $data = $this->getRequest()->getPost();
           $adapter = $this->loadAdapter();
-          $adapter->unmerge();
+          $adapter->unmerge($data);
 
           return new JsonModel(array("message" => "User account unmerged"));  
      }
