@@ -123,6 +123,23 @@ class UserEntityUserHydrator implements HydratorInterface
         }
         $this->class->reflFields['validation']->setValue($document, $return);
         $hydratedData['validation'] = $return;
+
+        /** @EmbedOne */
+        if (isset($data['picture'])) {
+            $embeddedDocument = $data['picture'];
+            $className = $this->unitOfWork->getClassNameForAssociation($this->class->fieldMappings['picture'], $embeddedDocument);
+            $embeddedMetadata = $this->dm->getClassMetadata($className);
+            $return = $embeddedMetadata->newInstance();
+
+            $embeddedData = $this->dm->getHydratorFactory()->hydrate($return, $embeddedDocument, $hints);
+            $embeddedId = $embeddedMetadata->identifier && isset($embeddedData[$embeddedMetadata->identifier]) ? $embeddedData[$embeddedMetadata->identifier] : null;
+
+            $this->unitOfWork->registerManaged($return, $embeddedId, $embeddedData);
+            $this->unitOfWork->setParentAssociation($return, $this->class->fieldMappings['picture'], $document, 'picture');
+
+            $this->class->reflFields['picture']->setValue($document, $return);
+            $hydratedData['picture'] = $return;
+        }
         return $hydratedData;
     }
 }

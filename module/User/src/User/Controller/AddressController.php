@@ -240,7 +240,7 @@ class AddressController extends AbstractRestfulController
     	$address = $user->getAddresses()->get($data['id']);
 
     	if(!$address){
-    		throw new \Exception("Address not found", \User\Module::ADDRESS_NOT_FOUND);
+    		throw new \Exception("Address not found", \User\Module::ERROR_ADDRESS_NOT_FOUND);
     	}
 
     	$user->getAddresses()->removeElement($address);

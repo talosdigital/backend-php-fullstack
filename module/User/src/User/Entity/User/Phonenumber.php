@@ -17,6 +17,4 @@ class Phonenumber extends Document
     /** @ODM\String */
     protected $phonenumber;
 	
-
-
 }

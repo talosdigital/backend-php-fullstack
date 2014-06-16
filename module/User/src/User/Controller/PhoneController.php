@@ -161,7 +161,7 @@ class PhoneController extends AbstractRestfulController
     	$phone = $user->getPhonenumbers()->get($data['id']);
 
     	if(!$phone){
-    		throw new \Exception("Phone number not found", \User\Module::ADDRESS_NOT_FOUND);
+    		throw new \Exception("Phone number not found", \User\Module::ERROR_ADDRESS_NOT_FOUND);
     	}
 
     	$user->getPhonenumbers()->removeElement($phone);

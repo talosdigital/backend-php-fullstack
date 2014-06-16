@@ -10,7 +10,7 @@ class AddressFacade {
 
 	function __construct($user){
 		if(!$user){
-			throw new \Exception("Empty user", \User\Module::EMPTY_USER);			
+			throw new \Exception("Empty user", \User\Module::ERROR_EMPTY_USER);			
 		}
 		$this->addresses = $user->getAddresses();
 	}

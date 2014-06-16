@@ -11,7 +11,7 @@ class Address {
     	if(!is_array($data)){
  		
     		if(!is_string($data->get('label'))){
-    			throw new \Exception("Bad request", \User\Module::BAD_REQUEST);
+    			throw new \Exception("Bad request", \User\Module::ERROR_BAD_REQUEST);
     			
     		}
 

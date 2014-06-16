@@ -67,6 +67,9 @@ class User extends Document implements RoleProviderInterface
 	/** @ODM\EmbedMany(targetDocument="User\Entity\User\Validation", strategy="set") */
 	protected $validation = array();
 
+    /** @ODM\EmbedOne(targetDocument="User\Entity\User\Picture") */
+    protected $picture;
+
 
 	public function getRoles() {
 	   //$role = new Role(array("role_id" => "user"));

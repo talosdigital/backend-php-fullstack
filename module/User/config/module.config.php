@@ -16,7 +16,8 @@ return array(
             'User\Controller\Auth' => 'User\Controller\AuthController',
             'User\Controller\Profile' => 'User\Controller\ProfileController',
             'User\Controller\Address' => 'User\Controller\AddressController',
-            'User\Controller\Phone' => 'User\Controller\PhoneController'
+            'User\Controller\Phone' => 'User\Controller\PhoneController',
+            'User\Controller\Picture' => 'User\Controller\PictureController'
 		),
     ),
 
@@ -33,7 +34,9 @@ return array(
 	        'BjyAuthorize\Guard\Controller' => array(
 	            array('controller' => 'User\Controller\Auth', 'roles' => array('user', 'guest')),           
 	            array('controller' => 'User\Controller\Profile', 'roles' => array('user')),            
-	            array('controller' => 'User\Controller\Address', 'roles' => array('guest'))            
+	            array('controller' => 'User\Controller\Address', 'roles' => array('user')),
+                array('controller' => 'User\Controller\Phone', 'roles' => array('user')),
+                array('controller' => 'User\Controller\Picture', 'roles' => array('user'))            
 	        ),
 	    ),
 	),
