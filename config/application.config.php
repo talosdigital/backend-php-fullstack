@@ -9,7 +9,7 @@ return array(
         'ZfcBase',
         'ZfcUser',
         'ZfcUserDoctrineMongoODM',
-        //'BjyAuthorize',
+        'BjyAuthorize',
         'User',
         'Geolocation'
     ),

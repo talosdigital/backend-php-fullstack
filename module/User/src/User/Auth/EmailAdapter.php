@@ -3,6 +3,7 @@
 namespace User\Auth;
 
 use User\Entity\User;
+use User\Entity\User\Role;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Stdlib\Parameters;
 
@@ -35,7 +36,11 @@ class EmailAdapter extends AbstractAdapter implements IAdapter{
         $user = $service->register($post);
         if($user){
 			$user->setName($request->get('name'));
-            $user->setRole('user');
+
+            $role = new Role();
+            $role->setRoleId('user');
+
+            $user->setRoles($role);
             $service->getUserMapper()->update($user);
             
             $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();

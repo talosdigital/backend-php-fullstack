@@ -59,12 +59,21 @@ class UserEntityUserHydrator implements HydratorInterface
             $hydratedData['password'] = $return;
         }
 
-        /** @Field(type="string") */
-        if (isset($data['role'])) {
-            $value = $data['role'];
-            $return = (string) $value;
-            $this->class->reflFields['role']->setValue($document, $return);
-            $hydratedData['role'] = $return;
+        /** @EmbedOne */
+        if (isset($data['roles'])) {
+            $embeddedDocument = $data['roles'];
+            $className = $this->unitOfWork->getClassNameForAssociation($this->class->fieldMappings['roles'], $embeddedDocument);
+            $embeddedMetadata = $this->dm->getClassMetadata($className);
+            $return = $embeddedMetadata->newInstance();
+
+            $embeddedData = $this->dm->getHydratorFactory()->hydrate($return, $embeddedDocument, $hints);
+            $embeddedId = $embeddedMetadata->identifier && isset($embeddedData[$embeddedMetadata->identifier]) ? $embeddedData[$embeddedMetadata->identifier] : null;
+
+            $this->unitOfWork->registerManaged($return, $embeddedId, $embeddedData);
+            $this->unitOfWork->setParentAssociation($return, $this->class->fieldMappings['roles'], $document, 'roles');
+
+            $this->class->reflFields['roles']->setValue($document, $return);
+            $hydratedData['roles'] = $return;
         }
 
         /** @Many */

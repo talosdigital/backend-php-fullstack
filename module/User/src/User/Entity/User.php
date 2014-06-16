@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Doctrine\Common\Collections\ArrayCollection;
 use BjyAuthorize\Provider\Role\ProviderInterface as RoleProviderInterface;
 use MyZend\Document\Document as Document;
+use User\Entity\User\Role;
 
 /** @ODM\Document(collection="user_user") */
 class User extends Document implements RoleProviderInterface
@@ -51,13 +52,8 @@ class User extends Document implements RoleProviderInterface
      */
     protected $password;
 
-    /**
-     * Role (guest, user, admin)
-     * @var String
-     *
-     * @ODM\String
-     */
-    protected $role;
+    /** @ODM\EmbedOne(targetDocument="User\Entity\User\Role") */
+    protected $roles;
 
 	/** @ODM\EmbedMany(targetDocument="User\Entity\User\Address") */
 	protected $addresses = array();
@@ -73,7 +69,8 @@ class User extends Document implements RoleProviderInterface
 
 
 	public function getRoles() {
-		
+	   //$role = new Role(array("role_id" => "user"));
+       return $this->roles;
 	}
 
     public function getOauthAdapter($adapter){

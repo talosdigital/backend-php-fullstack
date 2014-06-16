@@ -3,6 +3,7 @@ namespace IntegrationTests\Tests;
 
 use IntegrationTests\AbstractTestCase;
 use User\Entity\User;
+use User\Entity\User\Role;
 use User\Service\UserService;
 
 class UserTest extends AbstractTestCase {
@@ -28,8 +29,11 @@ class UserTest extends AbstractTestCase {
 		$data['email'] = $this::EMAIL;
 		$data['name'] = $this::NAME;
 		
+		$role = new Role();
+		$role->setRoleId('user');
 		$user = new User($data);
 
+		$user->setRoles($role);
 		$total = count($this->userService->findAll());
 
 		$this->userService->save($user);

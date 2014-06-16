@@ -42,7 +42,11 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 		        $user->getOauth()->add($facebookUser);
 		        
 		        $user->setPassword(null);
-		        $user->setRole('user');
+		        
+		        $role = new Role();
+            	$role->setRoleId('user');
+
+		        $user->setRoles($role);
 		        $service->getUserMapper()->insert($user);
 
 		        $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
