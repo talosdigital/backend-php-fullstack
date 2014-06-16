@@ -31,6 +31,9 @@ class Module
     const ERROR_FACEBOOK_REGISTER_FAILED = 500;
     const ERROR_FACEBOOK_ALREADY_MERGED = 501;
     const ERROR_NOT_LOGGED_IN = 600;
+    const EMPTY_USER = 700;
+    const ADDRESS_NOT_FOUND = 800;
+    const BAD_REQUEST = 900;
 	
     public function onBootstrap(MvcEvent $e)
     {

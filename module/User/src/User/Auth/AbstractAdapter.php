@@ -2,7 +2,7 @@
 
 namespace User\Auth;
 
-use User\Facade\AuthFacade;
+use User\Facade\ProfileFacade;
 
 class AbstractAdapter {
 		
@@ -58,7 +58,7 @@ class AbstractAdapter {
     public function getList(){
     	$user = $this->getAuthService()->getIdentity();
     	if($user){
-            return AuthFacade::get($user);
+            return ProfileFacade::get($user);
         }
        	else{
            throw new \Exception("User is not logged in", \User\Module::ERROR_NOT_LOGGED_IN);

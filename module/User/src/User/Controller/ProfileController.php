@@ -6,6 +6,7 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 use Application\Entity\Response;
 use User\Entity\User;
 use Zend\View\Model\JsonModel;
+use User\Helper\User as UserHelper;
 
 /**
  *
@@ -22,19 +23,6 @@ class ProfileController extends AbstractRestfulController
 		$adapter = new \User\Auth\EmailAdapter($this->getServiceLocator());
 		return $adapter;
 	}
-	/**
-     *
-     * @SWG\Api(
-     *   path="/profile",
-     *   description="Dashboard actions",
-     *    @SWG\Operation(
-     *      nickname="dashboard",
-     *      method = "GET",
-     *      summary="dashboard index"
-     *   )
-     *  )
-     *)
-     */
 
 	public function indexAction() {
 		return new JsonModel(array("message" => "This is your dashboard."));
@@ -90,7 +78,7 @@ class ProfileController extends AbstractRestfulController
 		$request = $this->getRequest();
 		$isPost = $request->isPost();
 		$isGet = $request->isGet();
-		$user = $this->getCurrentUser();
+		$user = UserHelper::getCurrentUser();
 
 		if($isGet){
 			$passwordRequired = \User\Facade\ProfileFacade::getPasswordRequired($this->getCurrentUser());
@@ -133,7 +121,7 @@ class ProfileController extends AbstractRestfulController
      *)
      */
 	public function changeEmailAction(){
-		$user = $this->getCurrentUser();
+		$user = UserHelper::getCurrentUser();
 		$data = $this->getRequest()->getPost();
 		
           $adapter = $this->loadEmailAdapter();
@@ -142,13 +130,19 @@ class ProfileController extends AbstractRestfulController
 		return new JsonModel(array("message" => "Email changed."));
 	}
 
+     /**
+     *
+     * @SWG\Api(
+     *   path="/profile",
+     *    @SWG\Operation(
+     *      nickname="get_user_list",
+     *      method = "GET",
+     *         summary = "user information"
+     *   )
+     *  )
+     *)
+     */
      public function getList(){
           return new JsonModel($this->loadEmailAdapter()->getList());    
-     }
-
-     //Support functions
-
-     private function getCurrentUser(){
-          return $this->zfcUserAuthentication()->getIdentity();
      }
 }

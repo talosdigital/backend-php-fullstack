@@ -15,7 +15,8 @@ return array(
         'invokables' => array(
             'User\Controller\Auth' => 'User\Controller\AuthController',
             'User\Controller\Profile' => 'User\Controller\ProfileController',
-            'User\Controller\Address' => 'User\Controller\AddressController'
+            'User\Controller\Address' => 'User\Controller\AddressController',
+            'User\Controller\Phone' => 'User\Controller\PhoneController'
 		),
     ),
 
