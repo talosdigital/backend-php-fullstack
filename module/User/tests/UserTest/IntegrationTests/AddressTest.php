@@ -40,23 +40,21 @@ class AddressTest extends AbstractTestCase {
 
 	public function testCreateAddress(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-		$addresses[0] = $this->createAddress();
+		$user->getAddresses()->add($this->createAddress());
 
-		$user->setAddresses($addresses);
 		$this->userService->save($user);
 		$addresses = $user->getAddresses();
 
-		$this->assertEquals($this::STREET, $addresses[0]->getStreet());
+		$this->assertEquals($this::STREET, $addresses->get(0)->getStreet());
 	}
 
 	public function testCreateTwoOrMoreAddresses(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-		
+		$addresses = $user->getAddresses();
 		for ($i=0; $i < $this::ADDRESSES_QUANTITY; $i++) { 
-			$addresses[$i] = $this->createAddress();
+			$addresses->add($this->createAddress());
 		}
 		
-		$user->setAddresses($addresses);
 		$this->userService->save($user);
 		$addresses = $user->getAddresses();
 
@@ -69,29 +67,34 @@ class AddressTest extends AbstractTestCase {
 		$total = count($addresses);
 
 		$this->assertCount(1, $addresses);
-		$this->assertEquals($this::ACTUAL_STREET, $addresses[0]->getStreet());
-		$this->assertEquals($this::ACTUAL_POST_CODE, $addresses[0]->getPostCode());
+		$this->assertEquals($this::ACTUAL_STREET, $addresses->get(0)->getStreet());
+		$this->assertEquals($this::ACTUAL_POST_CODE, $addresses->get(0)->getPostCode());
 	}
 
 	public function testModifyAddress(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL_WN_EMPTY_ADDRESSES));
 
-		$addresses[0] = $this->createAddress();
-		
-		$user->setAddresses($addresses);
+		$user->getAddresses()->get(0)->setStreet($this::STREET);
+		$user->getAddresses()->get(0)->setEmail($this::EMAIL);
+		$user->getAddresses()->get(0)->setPostCode($this::POST_CODE);
+		$user->getAddresses()->get(0)->setGeolocation($this::GEOLOCATION);
 		$this->userService->save($user);
+
 		$addresses = $user->getAddresses();
 
-		$this->assertEquals($this::STREET, $addresses[0]->getStreet());
-		$this->assertEquals($this::POST_CODE, $addresses[0]->getPostCode());
+		$this->assertEquals($this::STREET, $addresses->get(0)->getStreet());
+		$this->assertEquals($this::POST_CODE, $addresses->get(0)->getPostCode());
 	}
 
 	public function testDeleteAddress(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL_WN_EMPTY_ADDRESSES));
-		$user->setAddresses(array());
+		
+		$address = $user->getAddresses()->get(0);
+		$user->getAddresses()->removeElement($address);
+
 		$this->userService->save($user);
-		$addresses  = count($user->getAddresses());
-		$this->assertEquals(0, $addresses);
+		$addresses = $user->getAddresses();
+		$this->assertCount(0, $addresses);
 	}
 
 }

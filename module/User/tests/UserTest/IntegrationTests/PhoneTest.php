@@ -34,23 +34,21 @@ class PhoneTest extends AbstractTestCase {
 
 	public function testCreatePhone(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-		$phonenumbers[0] = $this->createPhone();
-
-		$user->setPhonenumbers($phonenumbers);
+		$user->getPhonenumbers()->add($this->createPhone());
 		$this->userService->save($user);
+
 		$phonenumbers = $user->getPhonenumbers();
 
 		$this->assertCount(1, $phonenumbers);
-		$this->assertEquals($this::PHONE, $phonenumbers[0]->getPhonenumber());
+		$this->assertEquals($this::PHONE, $phonenumbers->get(0)->getPhonenumber());
 	}
 
 	public function testCreateTwoOrMorePhones(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
 		for ($i=0; $i < $this::PHONE_QUANTITY; $i++) { 
-			$phonenumbers[$i] = $this->createPhone();
+			$user->getPhonenumbers()->add($this->createPhone());
 		}
 		
-		$user->setPhonenumbers($phonenumbers);
 		$this->userService->save($user);
 		$phonenumbers = $user->getPhonenumbers();
 
@@ -63,23 +61,24 @@ class PhoneTest extends AbstractTestCase {
 		$total = count($phonenumbers);
 
 		$this->assertCount(1, $phonenumbers);
-		$this->assertEquals($this::ACTUAL_PHONE, $phonenumbers[0]->getPhonenumber());
+		$this->assertEquals($this::ACTUAL_PHONE, $phonenumbers->get(0)->getPhonenumber());
 	}
 
 	public function testModifyPhone(){
-		$user = $this->userService->findOneBy(array('email' => $this::EMAIL));
-		$phonenumbers[0] = $this->createPhone();
-		
-		$user->setPhonenumbers($phonenumbers);
+		$user = $this->userService->findOneBy(array('email' => $this::EMAIL_WN_EMPTY_ADDRESSES));
+		$user->getPhonenumbers()->get(0)->setPhonenumber($this::PHONE);
+
 		$this->userService->save($user);
 		$phonenumbers = $user->getPhonenumbers();
 
-		$this->assertEquals($this::PHONE, $phonenumbers[0]->getPhonenumber());
+		$this->assertEquals($this::PHONE, $phonenumbers->get(0)->getPhonenumber());
 	}
 
 	public function testDeletePhone(){
 		$user = $this->userService->findOneBy(array('email' => $this::EMAIL_WN_EMPTY_ADDRESSES));
-		$user->setPhonenumbers(array());
+		$phonenumber = $user->getPhonenumbers()->get(0);
+		$user->getPhonenumbers()->removeElement($phonenumber);
+		
 		$this->userService->save($user);
 		$phonenumbers  = count($user->getPhonenumbers());
 		$this->assertEquals(0, $phonenumbers);
