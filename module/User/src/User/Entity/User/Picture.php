@@ -8,6 +8,14 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 /** @ODM\EmbeddedDocument */
 class Picture extends Document
 {
+	/**
+     * Id
+     * @var MongoId
+     *
+     * @ODM\Id
+     */
+	protected $id;
+
 	/** @ODM\String */
 	protected $url;
 
@@ -15,10 +23,7 @@ class Picture extends Document
 	protected $long_url;
 
 	/** @ODM\String */
-	protected $width;
-
-	/** @ODM\String */
-	protected $height;
+	protected $size;
 
 	/** @ODM\String */
 	protected $type;

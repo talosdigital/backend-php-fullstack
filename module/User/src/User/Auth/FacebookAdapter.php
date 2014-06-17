@@ -14,6 +14,8 @@ use Facebook\FacebookRequestException;
 use Facebook\FacebookAuthorizationException;
 use Facebook\GraphObject;
 use Facebook\GraphUser;
+use User\Entity\User\Picture;
+use User\Entity\User\Role;
 
 class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
@@ -38,10 +40,15 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 		        $user = new User();
 		        $user->setEmail($facebookUser->getEmail());
 		        $user->setName($this->full_name);
-
-		        $user->getOauth()->add($facebookUser);
-		        
 		        $user->setPassword(null);
+		        
+		        $picture = new Picture();
+		        $picture->setId(new \MongoId());
+		        $picture->setUrl("https://graph.facebook.com/".$request->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
+		        $picture->setLongUrl("https://graph.facebook.com/".$request->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
+
+		        $user->setPicture($picture);
+		        $user->getOauth()->add($facebookUser);
 		        
 		        $role = new Role();
             	$role->setRoleId('user');
@@ -118,7 +125,7 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 		
 		$facebookDocument->setId($facebookArray['id']);
 		$facebookDocument->setEmail($facebookArray['email']);
-		$facebookDocument->setPicture("https://graph.facebook.com/".$facebookArray['id']."/picture");
+		$facebookDocument->setPicture("https://graph.facebook.com/".$facebookArray['id']."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
 		$this->full_name = $graph->getName();
         return $facebookDocument;
     }
@@ -129,6 +136,13 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     	
     	if(empty($user)){
     		$user = $this->getCurrentUser();
+    	}
+
+    	if(empty($user->getPicture())){
+    		$picture = new Picture();
+	        $picture->setId(new \MongoId());
+	        $picture->setUrl("https://graph.facebook.com/".$data->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
+	        $picture->setLongUrl("https://graph.facebook.com/".$data->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
     	}
 
     	$facebookToken = $data->get('facebookToken');

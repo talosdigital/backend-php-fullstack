@@ -7,6 +7,7 @@ use Zend\View\Model\JsonModel;
 
 use User\Entity\User;
 use User\Helper\User as UserHelper;
+use User\Helper\Picture as PictureHelper;
 use User\Facade\PictureFacade;
 
 /**
@@ -58,8 +59,15 @@ class PictureController extends AbstractRestfulController
      */
 
     public function create(){
+        $user = UserHelper::getCurrentUser();
+        $pictureUpload = new PictureHelper();
+
         $file = $this->getRequest()->getFiles();
-        var_dump($file);
-        die();    
+        $picture = $pictureUpload->addPictureFromRequest($file, $user);
+        
+        $user->setPicture($picture);
+        UserHelper::getUserMapper()->update($user);
+
+        return new JsonModel(array('message' => 'Picture uploaded'));
     }
 }

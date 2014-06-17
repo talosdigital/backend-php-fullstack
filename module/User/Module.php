@@ -35,6 +35,7 @@ class Module
     const EROOR_ADDRESS_NOT_FOUND = 800;
     const ERROR_BAD_REQUEST = 900;
     const ERROR_USER_WITHOUT_PICTURE = 1000;
+    const ERROR_PICTURE_UPLOAD_FAILED = 1100;
 	
     public function onBootstrap(MvcEvent $e)
     {
@@ -61,5 +62,4 @@ class Module
             ),
         );
     }
-
 }
