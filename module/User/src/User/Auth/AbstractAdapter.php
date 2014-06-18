@@ -56,7 +56,11 @@ class AbstractAdapter {
     }
 
     public function getList(){
-    	$user = $this->getAuthService()->getIdentity();
+    	$user = $this->getCurrentUser();
+    	if(empty($user)){
+    		$user = $this->getAuthService()->getIdentity();
+    	}
+
     	if($user){
             return ProfileFacade::get($user);
         }

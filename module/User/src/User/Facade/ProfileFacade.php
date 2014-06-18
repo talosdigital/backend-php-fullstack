@@ -15,13 +15,16 @@ class ProfileFacade {
 
     public function get($user) {
 		$oauth = new OauthFacade();
-		$addresses = new AddressFacade($user);
+		$addresses = new AddressFacade();
+		$picture = new PictureFacade();
+
         return array(
         		'full_name' => $user->getName(),
 	        	'email' => $user->getEmail(),
-	        	'role' => $user->getRole(),
-	        	'oauth' => $oauth->get($user->getOauth()),
-	        	'addresses' => $addresses->getList()
+	        	'role' => $user->getRoles()->getRoleId(),
+	        	'oauth' => $oauth->get($user),
+	        	'addresses' => $addresses->getList($user),
+	        	'picture' => $picture->get($user)
         	);
 	}
 

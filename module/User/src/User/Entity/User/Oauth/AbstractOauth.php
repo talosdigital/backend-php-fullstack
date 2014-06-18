@@ -9,6 +9,9 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 abstract class AbstractOauth extends Document{
 
 	/** @ODM\String */
+    protected $adapter;
+
+	/** @ODM\String */
     protected $id;
 
     /** @ODM\String */

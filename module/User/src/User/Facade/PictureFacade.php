@@ -12,15 +12,13 @@ class PictureFacade {
 		
 		$picture = $user->getPicture();
 		if(empty($picture)){
-			throw new \Exception("User without picture", \User\Module::ERROR_USER_WITHOUT_PICTURE);
-			
+			return null;
 		}
 
        	$response = array(
        		"url" => $picture->getUrl(),
        		"longUrl" => $picture->getLongUrl(),
-			"width" => $picture->getWidth(),
-			"height" => $picture->getHeight(),
+			"size" => $picture->getSize(),
 			"type" => $picture->getType()
        		);
 

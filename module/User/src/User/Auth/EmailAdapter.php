@@ -24,7 +24,7 @@ class EmailAdapter extends AbstractAdapter implements IAdapter{
         $form->setHydrator($this->getFormHydrator());
         $form->bind($user);
         $form->setData($post);
-		if(! $form->isValid()) {
+		if(!$form->isValid()) {
 			$errors = $form->getMessages();
 			if(isset($errors['email']['recordFound'])) {
 				throw new \Exception("This email is already taken.", \User\Module::ERROR_DUPLICATED_EMAIL);	

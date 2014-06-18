@@ -61,7 +61,7 @@ class PictureController extends AbstractRestfulController
     public function create(){
         $user = UserHelper::getCurrentUser();
         $pictureUpload = new PictureHelper();
-
+        
         $file = $this->getRequest()->getFiles();
         $picture = $pictureUpload->addPictureFromRequest($file, $user);
         

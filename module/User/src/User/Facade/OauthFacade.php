@@ -6,11 +6,18 @@ use User\Entity\User;
 
 class OauthFacade {
 
-	public function get($Oauth) {
+	public function get($user) {
+        $Oauth = $user->getOauth();
         $response = array();
+
+        if(empty($Oauth)){
+            return null;
+        }
+
         foreach ($Oauth as $oauth) {
             array_push($response, array(
-                'label' => $oauth->getLabel(),
+                'adapter' => $oauth->getAdapter(),
+                'id' => $oauth->getId(),
                 'email' => $oauth->getEmail(),
                 'picture' => $oauth->getPicture()
                 ));            

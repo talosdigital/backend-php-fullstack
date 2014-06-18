@@ -24,6 +24,7 @@ class Module
 
 {
 	const ERROR_UNEXPECTED = 0;
+    const ERROR_NOT_SUPPORTED_FUNCTION = 10;
 	const ERROR_DUPLICATED_EMAIL = 100;
 	const ERROR_LOGIN_FAILED = 200;
     const ERROR_CHANGE_PASSWORD_FAILED = 300;
@@ -36,6 +37,8 @@ class Module
     const ERROR_BAD_REQUEST = 900;
     const ERROR_USER_WITHOUT_PICTURE = 1000;
     const ERROR_PICTURE_UPLOAD_FAILED = 1100;
+    const ERROR_TWITTER_API_BAD_REQUEST = 1200;
+    const ERROR_TWITTER_ALREADY_MERGED = 1300;
 	
     public function onBootstrap(MvcEvent $e)
     {

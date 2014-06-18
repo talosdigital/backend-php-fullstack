@@ -9,24 +9,34 @@ use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\Point;
 
+
+
 class Picture {
 
 	const UPLOAD_FOLDER = '/Images';
 	const PICTURE_WIDTH = 500;
-
-	//image magic
+	const MINIMUN_PICTURE_WIDTH = 100;
+	const MAXIMUN_PICTURE_SIZE = 10485760;
 
 	public function addPictureFromRequest($file, $user){
 		$picture = $file->get('picture');
 
 		$adapter = new \Zend\File\Transfer\Adapter\Http();
-
-		$size = new \Zend\Validator\File\Size(array('max' => 10485760 ));
+		$size = new \Zend\Validator\File\Size(array('max' => $this::MAXIMUN_PICTURE_SIZE ));
         $extension = new \Zend\Validator\File\Extension(array('extension' => array('jpeg', 'jpg', 'gif', 'tiff', 'png', 'bmp')));
-		$adapter->setValidators(array($size, $extension), $picture['name']);
+		$adapter->setValidators(array($extension, $size), $picture['name']);
 		
 		if(!$adapter->isValid()){
-			throw new \Exception("An error was found while uploading the picture", \User\Module::ERROR_PICTURE_UPLOAD_FAILED);
+
+			$errors = $adapter->getMessages();
+			$message = '';
+
+			foreach ($errors as $error) {
+				$message .= $error;
+				break;
+			}
+
+			throw new \Exception($message, \User\Module::ERROR_PICTURE_UPLOAD_FAILED);
 		}
 
 		if(empty($user->getPicture())){
@@ -36,6 +46,7 @@ class Picture {
 		else{
 			$pd = $user->getPicture();
 		}
+
 
 		$ext = pathinfo($picture['name'], PATHINFO_EXTENSION);
 		$tmpFileUrl = $pd->getId().'_tmp.'.$ext;
@@ -85,6 +96,9 @@ class Picture {
 
 			$image->resize(new Box($width, $height))
 		   			->save($destination);
+		}
+		elseif($actualWidth < $this::MINIMUN_PICTURE_WIDTH){
+			throw new \Exception("The picture is smaller than expected", \User\Module::ERROR_PICTURE_UPLOAD_FAILED);
 		}
 		else{
 			$image->save($destination);

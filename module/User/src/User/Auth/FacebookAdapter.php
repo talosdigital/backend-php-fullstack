@@ -60,7 +60,7 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 		        $this->getAuthPlugin()->getAuthService()->clearIdentity();
 		        $this->getAuthPlugin()->getAuthService()->getStorage()->write($user);
 				
-		        return true;
+		        return $user;
 		    }
 		    catch (Exception $ex){
 		    	throw new \Exception("Error Processing Facebook API", \User\Module::ERROR_FACEBOOK_REGISTER_FAILED);
@@ -73,16 +73,17 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 	    	}
 	    	
 	    	$this->setCurrentUser($user);
-
 	    	$result = $user->getOauthAdapter($this::ADAPTER);
+	        
 	        if(empty($result)) { 
 	            $this->merge($request);
 			}
+
 	        $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
 	        $this->getAuthPlugin()->getAuthService()->clearIdentity();
 	        $this->getAuthPlugin()->getAuthService()->getStorage()->write($user);
 	        
-	        return true;
+	        return $user;
 	   }
 	}
 	
@@ -104,10 +105,10 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
             return null;
     }
 
-    private function getUserByFacebook($facebook_id){
+    private function getUserByFacebook($facebookId){
     	$dm = $this->getServiceLocator()->get('doctrine.documentmanager.odm_default');
         $query = $dm->getRepository($this->getDocument());
-        $user = $query->findOneBy(array('oauth.id' => $facebook_id, 'oauth.adapter' => 'facebook'));
+        $user = $query->findOneBy(array('oauth.id' => $facebookId, 'oauth.adapter' => 'facebook'));
         if(!empty($user))
             return $user;
         else

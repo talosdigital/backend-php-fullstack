@@ -27,6 +27,14 @@ class UserEntityUserPictureHydrator implements HydratorInterface
     {
         $hydratedData = array();
 
+        /** @Field(type="id") */
+        if (isset($data['_id'])) {
+            $value = $data['_id'];
+            $return = $value instanceof \MongoId ? (string) $value : $value;
+            $this->class->reflFields['id']->setValue($document, $return);
+            $hydratedData['id'] = $return;
+        }
+
         /** @Field(type="string") */
         if (isset($data['url'])) {
             $value = $data['url'];
@@ -44,19 +52,11 @@ class UserEntityUserPictureHydrator implements HydratorInterface
         }
 
         /** @Field(type="string") */
-        if (isset($data['width'])) {
-            $value = $data['width'];
+        if (isset($data['size'])) {
+            $value = $data['size'];
             $return = (string) $value;
-            $this->class->reflFields['width']->setValue($document, $return);
-            $hydratedData['width'] = $return;
-        }
-
-        /** @Field(type="string") */
-        if (isset($data['height'])) {
-            $value = $data['height'];
-            $return = (string) $value;
-            $this->class->reflFields['height']->setValue($document, $return);
-            $hydratedData['height'] = $return;
+            $this->class->reflFields['size']->setValue($document, $return);
+            $hydratedData['size'] = $return;
         }
 
         /** @Field(type="string") */

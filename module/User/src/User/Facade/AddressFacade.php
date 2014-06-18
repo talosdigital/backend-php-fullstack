@@ -7,18 +7,17 @@ use User\Entity\User\Address;
 class AddressFacade {
 
 	protected $addresses;
-
-	function __construct($user){
-		if(!$user){
-			throw new \Exception("Empty user", \User\Module::ERROR_EMPTY_USER);			
-		}
-		$this->addresses = $user->getAddresses();
-	}
 	
-	public function getList() {
+	public function getList($user) {
+        $addresses = $user->getAddresses();
+        
+        if(count($addresses)==0){
+            return null;
+        }
+
         $addressesArray = array();
         $i=0;
-        foreach ($this->addresses as $address) {
+        foreach ($addresses as $address) {
         	array_push($addressesArray, array(
         			'id' => $i,
         			'label' => $address->getLabel(),

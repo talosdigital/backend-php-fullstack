@@ -24,6 +24,9 @@ class AuthController extends AbstractRestfulController
 		if($data->get('adapter') == 'facebook') {
 			$adapter = new \User\Auth\FacebookAdapter($this->getServiceLocator());
 		}
+          elseif($data->get('adapter') == 'twitter') {
+               $adapter = new \User\Auth\TwitterAdapter($this->getServiceLocator());
+          }
 		else {
 			$adapter = new \User\Auth\EmailAdapter($this->getServiceLocator());
 		}
@@ -64,7 +67,7 @@ class AuthController extends AbstractRestfulController
      *				description = "It's the display name of the user, and it is not required only if adapter is not null"
      *          )
      *      )
-     *   )
+     *   
      *  )
      *)
      */
@@ -73,7 +76,6 @@ class AuthController extends AbstractRestfulController
      *
      * @SWG\Api(
      *   path="/auth/signup",
-     *   
      *   description="Auth logic (signup, login and logout)",
      *    @SWG\Operation(
      *      nickname="singup",
@@ -101,9 +103,10 @@ class AuthController extends AbstractRestfulController
      *          )
      *      )
      *   )
-     *  )
+     *  
      *)
      */
+
 	public function signupAction() {
 		$data = $this->getRequest()->getPost();
 		$adapter = $this->loadAdapter();
@@ -120,7 +123,7 @@ class AuthController extends AbstractRestfulController
      *    @SWG\Operation(
      *      nickname="login",
      *      method = "POST",
-     *      summary="login action (Email Adapter)",
+     *      summary="login action - Email Adapter",
      *      @SWG\Parameters(
      *          @SWG\Parameter(
      *              name="email",
@@ -138,11 +141,11 @@ class AuthController extends AbstractRestfulController
      *          )
      *      )
      *   )
-     *  )
+     *  
      *)
      */
 
-          /**
+     /**
      *
      * @SWG\Api(
      *   path="/auth/login",
@@ -173,7 +176,47 @@ class AuthController extends AbstractRestfulController
      *      )
      *   )
      *  )
-     *)
+     *
+     */
+
+     /**
+     *
+     * @SWG\Api(
+     *   path="/auth/login",
+     *    @SWG\Operation(
+     *      nickname="login",
+     *      method = "POST",
+     *      summary="login action (twitter adapter)",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="adapter",
+     *              paramType="form",
+     *              type="string",
+     *              required=true,
+     *              defaultValue = "twitter"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="twitterToken",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          ),
+     *          @SWG\Parameter(
+     *              name="twitterSecret",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          ),
+     *          @SWG\Parameter(
+     *              name="twitterName",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          )
+     *      )
+     *   )
+     *  )
+     *
      */
 	public function loginAction() {
 		$data = $this->getRequest()->getPost();
@@ -234,6 +277,45 @@ class AuthController extends AbstractRestfulController
      *  )
      *)
      */
+
+              /**
+     *
+     * @SWG\Api(
+     *   path="/auth/merge",
+     *    @SWG\Operation(
+     *      nickname="merge_twitter",
+     *      method = "POST",
+     *      summary="merge - Twitter",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="adapter",
+     *              paramType="form",
+     *              type="string",
+     *              required=true,
+     *              defaultValue = "twitter"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="twitterName",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          ),
+     *          @SWG\Parameter(
+     *              name="twitterToken",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          ),
+     *          @SWG\Parameter(
+     *              name="twitterSecret",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          )
+     *      )
+     *   )
+     *  )
+     */
 	public function mergeAction(){
           $data = $this->getRequest()->getPost();
           
@@ -250,7 +332,7 @@ class AuthController extends AbstractRestfulController
      *    @SWG\Operation(
      *      nickname="unmerge",
      *      method = "POST",
-     *      summary="unmerge action",
+     *      summary="unmerge action - Facebook",
      *      @SWG\Parameters(
      *          @SWG\Parameter(
      *              name="adapter",
@@ -268,6 +350,25 @@ class AuthController extends AbstractRestfulController
      *   )
      *  )
      *)
+     */
+
+     /**
+     * @SWG\Api(
+     *   path="/auth/unmerge",
+     *    @SWG\Operation(
+     *      nickname="unmerge",
+     *      method = "POST",
+     *      summary="unmerge action - Twitter",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="adapter",
+     *              paramType="form",
+     *              type="string",
+     *              required=true,
+     *              defaultValue = "twitter"
+     *          )
+     *  )
+     *))
      */
      public function unmergeAction(){
           $data = $this->getRequest()->getPost();

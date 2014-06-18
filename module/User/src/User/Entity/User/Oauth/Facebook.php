@@ -8,7 +8,8 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 class Facebook extends Oauth implements IOauth{
 	const ADAPTER = "facebook";
 
-	function __construct(){
+	function __construct($array=null){
+		parent::__construct($array);
 		$this->setAdapter($this::ADAPTER);
 	}
 
