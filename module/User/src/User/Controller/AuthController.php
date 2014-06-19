@@ -7,6 +7,8 @@ use Application\Entity\Response;
 use User\Entity\User;
 use Zend\View\Model\JsonModel;
 use Swagger\Swagger;
+use User\Helper\User as UserHelper;
+use User\Facade\ProfileFacade;
 /**
  *
  * @SWG\Model(id="auth")
@@ -112,7 +114,7 @@ class AuthController extends AbstractRestfulController
 		$adapter = $this->loadAdapter();
 
 		$user = $adapter->signup($data);
-		return new JsonModel(array("message" => "User was created."));	
+		return new JsonModel(ProfileFacade::get(UserHelper::getCurrentUser()));	
 	}
 	
 
@@ -223,7 +225,7 @@ class AuthController extends AbstractRestfulController
 		$adapter = $this->loadAdapter();
 
 		$user = $adapter->login($data);
-		return new JsonModel(array("message" => "Welcome back."));
+		return new JsonModel(ProfileFacade::get(UserHelper::getCurrentUser()));
 	}
 	
 	/**

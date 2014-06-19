@@ -11,4 +11,8 @@ class User {
     public function getUserMapper(){
         return $this->getServiceLocator()->get('zfcuser_user_service')->getUserMapper();
     }
+
+    public function getUserService(){
+    	return new UserService($this->getServiceLocator());
+    }
 }

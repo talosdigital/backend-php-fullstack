@@ -85,6 +85,7 @@ class EmailAdapter extends AbstractAdapter implements IAdapter{
 	}
 
 	public function changePassword($request, $user){
+        
         $form = $this->getChangePasswordForm();
         $prg = array(
             "identity" => $user->getEmail(),
@@ -101,13 +102,14 @@ class EmailAdapter extends AbstractAdapter implements IAdapter{
             throw new \Exception(json_encode($errors), \User\Module::ERROR_CHANGE_PASSWORD_FAILED);	
         }
 
-        if (!$this->getUserService()->changePassword($form->getData())) {
+        $zfcUserService = $this->getServiceLocator()->get('zfcuser_user_service');
+        if (!$zfcUserService->changePassword($form->getData())) {
             $errors = $form->getMessages();
             throw new \Exception(json_encode($errors), \User\Module::ERROR_CHANGE_PASSWORD_FAILED);	
         }
-
         return true;
 	}
+
 
 	public function changeEmail($request, $user){
         $form = $this->getChangeEmailForm();

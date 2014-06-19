@@ -94,5 +94,12 @@ return array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         )
-    )
+    ),
+    'bjyauthorize' => array(
+        'guards' => array(
+            'BjyAuthorize\Guard\Controller' => array(
+                array('controller' => 'Application\Controller\Index', 'roles' => array('user', 'guest'))     
+            ),
+        ),
+    ),
 );

@@ -86,4 +86,8 @@ class User extends Document implements RoleProviderInterface
         }
         return null;
     }
+
+    public function resetOauth(){
+        $this->oauth = new ArrayCollection();
+    }
 }

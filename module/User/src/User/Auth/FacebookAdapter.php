@@ -23,6 +23,7 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 	const SECRET = 'c4f122cd43915686cca6c7c4b1eaef6e'; 
 	const ADAPTER = "facebook";
 	private $full_name;
+	private $userService;
 
 	public function initialize(){
 		FacebookSession::setDefaultApplication($this::TOKEN, $this::SECRET);
@@ -54,7 +55,7 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
             	$role->setRoleId('user');
 
 		        $user->setRoles($role);
-		        $service->getUserMapper()->insert($user);
+		        $service->save($user);
 
 		        $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
 		        $this->getAuthPlugin()->getAuthService()->clearIdentity();
@@ -132,6 +133,7 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     }
 
     public function merge($data){
+    	$service = $this->getUserService();
     	$this->initialize();
     	$user = $this->getAuthService()->getIdentity();
     	
@@ -156,18 +158,24 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     	}
 
     	$user->getOauth()->add($facebookUser);
-        $this->getUserService()->getUserMapper()->update($user);
+        $service->save($user);
     }
 
     public function unmerge($data){
+    	$service = $this->getUserService();
     	$this->initialize();
 
     	$user = $this->getAuthPlugin()->getIdentity();
     	$fb = $user->getOauthAdapter($this::ADAPTER);
     	$user->getOauth()->removeElement($fb);
-    	$this->getUserService()->getUserMapper()->update($user);
 
+    	if(sizeof($user->getOauth())==0){
+    		$user->resetOauth();
+    	}
+
+    	$service->save($user);    	
     	$token = $data->get('facebookToken');
+
 
     	$session = new FacebookSession($token);
     	$request = new FacebookRequest($session, 'DELETE', '/me/permissions');

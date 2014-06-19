@@ -10,6 +10,7 @@ use User\Entity\User\Address;
 use User\Facade\AddressFacade; 
 use User\Helper\User as UserHelper;
 use User\Helper\Address as AddressHelper;
+use User\Service\UserService;
 
 /**
  *
@@ -17,6 +18,7 @@ use User\Helper\Address as AddressHelper;
  */
 class AddressController extends AbstractRestfulController
 {	
+    private $service;
 
 	/** @SWG\Resource(
     *   resourcePath="address",
@@ -44,9 +46,9 @@ class AddressController extends AbstractRestfulController
 
  	public function getList() {
  		$user = UserHelper::getCurrentUser();
-		$facade = new AddressFacade($user);
+		$facade = new AddressFacade();
 		
-		return new JsonModel($facade->getList($user->getAddresses())); 		
+		return new JsonModel($facade->getList($user)); 		
     }	
  	/*
 	public function get($id) {
@@ -114,7 +116,8 @@ class AddressController extends AbstractRestfulController
      */
 	
 	public function create() {
-    	$user = UserHelper::getCurrentUser();
+        $this->service = new UserService($this->getServiceLocator());
+        $user = UserHelper::getCurrentUser();
     	$data = $this->getRequest()->getPost();
 
     	$address = new Address();
@@ -122,7 +125,7 @@ class AddressController extends AbstractRestfulController
 
         try{
 	    	$user->getAddresses()->add($address);
-	    	UserHelper::getUserMapper()->update($user);
+	    	$this->service->save($user);
     	}
     	catch (\Exception $ex){
     		throw new \Exception($ex, \User\Module::ERROR_UNEXPECTED);

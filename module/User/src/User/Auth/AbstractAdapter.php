@@ -2,6 +2,7 @@
 
 namespace User\Auth;
 
+use User\Service\UserService;
 use User\Facade\ProfileFacade;
 
 class AbstractAdapter {
@@ -44,7 +45,7 @@ class AbstractAdapter {
 	}
 	
 	protected function getUserService(){
-        return $this->getServiceLocator()->get('zfcuser_user_service');
+        return new UserService($this->getServiceLocator());
     }
 
     protected function merge(){

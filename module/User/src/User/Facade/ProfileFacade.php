@@ -19,7 +19,7 @@ class ProfileFacade {
 		$picture = new PictureFacade();
 
         return array(
-        		'full_name' => $user->getName(),
+        		'name' => $user->getName(),
 	        	'email' => $user->getEmail(),
 	        	'role' => $user->getRoles()->getRoleId(),
 	        	'oauth' => $oauth->get($user),
