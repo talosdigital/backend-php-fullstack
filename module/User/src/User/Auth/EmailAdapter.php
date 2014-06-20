@@ -10,7 +10,8 @@ use Zend\Stdlib\Parameters;
 class EmailAdapter extends AbstractAdapter implements IAdapter{
 		
 	public function signup($request) {
-        $service = $this->getServiceLocator()->get('zfcuser_user_service');
+        $serviceZfc = $this->getServiceLocator()->get('zfcuser_user_service');
+        $service = $this->getUserService();
         $post = array(
                 "email" => $request->get('email'),
                 "password" => $request->get('password'),
@@ -33,7 +34,7 @@ class EmailAdapter extends AbstractAdapter implements IAdapter{
 				throw new \Exception(json_encode($errors), \User\Module::ERROR_UNEXPECTED);	
 			}
 		}
-        $user = $service->register($post);
+        $user = $serviceZfc->register($post);
         if($user){
 			$user->setName($request->get('name'));
 
@@ -41,7 +42,7 @@ class EmailAdapter extends AbstractAdapter implements IAdapter{
             $role->setRoleId('user');
 
             $user->setRoles($role);
-            $service->getUserMapper()->update($user);
+            $service->save($user);
             
             $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
             $this->getAuthPlugin()->getAuthService()->clearIdentity();
@@ -137,6 +138,24 @@ class EmailAdapter extends AbstractAdapter implements IAdapter{
 
       	return true;
 	}
+
+    public function changeInfo($request, $user){
+        $isValid = true;
+        if($request->get('email')!=$user->getEmail()){
+            $isValid = $this->changeEmail($request, $user);
+        }
+
+        if($isValid){
+            if(!empty($request->get('name'))){
+                $user->setName($request->get('name'));
+                $this->getServiceLocator()->get('userHelper')->saveUser($user);
+            }
+            else{
+                throw new \Exception("User name is empty", \User\Module::ERROR_EMPTY_USER_NAME);
+                
+            }
+        }
+    }
 	
 	public function logout() {
 		parent::logout();

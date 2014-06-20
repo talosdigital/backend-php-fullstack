@@ -8,9 +8,7 @@ use Zend\View\Model\JsonModel;
 use User\Entity\User;
 use User\Entity\User\Address;
 use User\Facade\AddressFacade; 
-use User\Helper\User as UserHelper;
-use User\Helper\Address as AddressHelper;
-use User\Service\UserService;
+use User\Helper\AddressHelper;
 
 /**
  *
@@ -45,7 +43,9 @@ class AddressController extends AbstractRestfulController
      */
 
  	public function getList() {
- 		$user = UserHelper::getCurrentUser();
+ 		$user = $this->zfcUserAuthentication()->getIdentity();
+        $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
+        
 		$facade = new AddressFacade();
 		
 		return new JsonModel($facade->getList($user)); 		
@@ -109,23 +109,44 @@ class AddressController extends AbstractRestfulController
      *              type="string",
      *              required=false,
      *              defaultValue = "12345"
-     *          )     
+     *          ),
+     *          @SWG\Parameter(
+     *              name="city",
+     *              paramType="form",
+     *              type="string",
+     *              required=false,
+     *              defaultValue = "Medellin"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="state",
+     *              paramType="form",
+     *              type="string",
+     *              required=false,
+     *              defaultValue = "Antioquia"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="country",
+     *              paramType="form",
+     *              type="string",
+     *              required=false,
+     *              defaultValue = "Colombia"
+     *          )          
      *   )
      *  )
      *)
      */
 	
 	public function create() {
-        $this->service = new UserService($this->getServiceLocator());
-        $user = UserHelper::getCurrentUser();
-    	$data = $this->getRequest()->getPost();
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
+        $data = $this->getRequest()->getPost();
 
     	$address = new Address();
     	$address = AddressHelper::setAddressByRequest($address, $data);
 
         try{
 	    	$user->getAddresses()->add($address);
-	    	$this->service->save($user);
+	    	$this->getServiceLocator()->get('userHelper')->saveUser($user);
     	}
     	catch (\Exception $ex){
     		throw new \Exception($ex, \User\Module::ERROR_UNEXPECTED);
@@ -197,7 +218,8 @@ class AddressController extends AbstractRestfulController
      *)
      */
 	public function replaceList() {
-        $user = UserHelper::getCurrentUser();
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
 
     	$data = array();
 		parse_str($this->getRequest()->getContent(), $data);
@@ -206,7 +228,7 @@ class AddressController extends AbstractRestfulController
     	$address = AddressHelper::setAddressByRequest($address, $data);
 
         try{
-	    	UserHelper::getUserMapper()->update($user);
+	    	$this->getServiceLocator()->get('userHelper')->saveUser($user);
     	}
     	catch (\Exception $ex){
     		throw new \Exception($ex, \User\Module::ERROR_UNEXPECTED);
@@ -236,7 +258,9 @@ class AddressController extends AbstractRestfulController
      *)
      */
 	public function deleteList() {
-		$user = UserHelper::getCurrentUser();
+		$user = $this->zfcUserAuthentication()->getIdentity();
+        $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
+
     	$data = array();
 		parse_str($this->getRequest()->getContent(), $data);
 
@@ -247,8 +271,8 @@ class AddressController extends AbstractRestfulController
     	}
 
     	$user->getAddresses()->removeElement($address);
+    	$this->getServiceLocator()->get('userHelper')->saveUser($user);
 
-    	UserHelper::getUserMapper()->update($user);
     	return new JsonModel(array('message' => 'Address deleted'));
 	}
 

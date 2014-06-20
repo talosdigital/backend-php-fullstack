@@ -10,7 +10,6 @@ class AddressFacade {
 	
 	public function getList($user) {
         $addresses = $user->getAddresses();
-        
         if(count($addresses)==0){
             return null;
         }
@@ -25,7 +24,10 @@ class AddressFacade {
         			'fullName' => $address->getFirstname()." ".$address->getLastname(),
         			'street' => $address->getStreet(),
         			'postCode' => $address->getPostCode(),
-        			'geolocation' => $address->getGeolocation()
+        			'geolocation' => $address->getGeolocation(),
+                    'city' => $address->getCity(),
+                    'state' => $address->getState(),
+                    'country' => $address->getCountry()
         		));
         	$i++;
         }

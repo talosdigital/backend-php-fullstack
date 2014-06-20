@@ -16,6 +16,9 @@ use Facebook\GraphObject;
 use Facebook\GraphUser;
 use User\Entity\User\Picture;
 use User\Entity\User\Role;
+use User\Helper\User as UserHelper;
+use Zend\Stdlib\Parameters;
+use Zend\Http\PhpEnvironment\Request;
 
 class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
@@ -30,36 +33,61 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 	}
 
 	public function signup($request) {
-
+		$serviceZfc = $this->getServiceLocator()->get('zfcuser_user_service');
 		$service = $this->getUserService();
+		
 		$this->initialize();
-
 		$facebookUser = $this->getFacebookUser($request->get('facebookToken'));
 	    $user = $this->getUserByEmail($facebookUser->getEmail());
 	    $fbUser = $this->getUserByFacebook($request->get('facebookId'));
-
-
+	    
 	    if((empty($user))&&(empty($fbUser))){
 	        try{
-				
+
+		        $passwordTemp = $request->get('facebookId');
+
+		        $post = array(
+                "email" => $facebookUser->getEmail(),
+                "password" => $passwordTemp,
+                "passwordVerify" => $passwordTemp
+				);
+
 		        $user = new User();
-		        $user->setEmail($facebookUser->getEmail());
-		        $user->setName($this->full_name);
-		        $user->setPassword(null);
-		        
-		        $picture = new Picture();
-		        $picture->setId(new \MongoId());
-		        $picture->setUrl("https://graph.facebook.com/".$request->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
-		        $picture->setLongUrl("https://graph.facebook.com/".$request->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
 
-		        $user->setPicture($picture);
-		        $user->getOauth()->add($facebookUser);
-		        
-		        $role = new Role();
-            	$role->setRoleId('user');
+				$form = $this->getRegisterForm();
+		        $form->setHydrator($this->getFormHydrator());
+		        $form->bind($user);
 
-		        $user->setRoles($role);
-		        $service->save($user);
+		        $form->setData($post);
+				
+				if(!$form->isValid()) {
+					$errors = $form->getMessages();
+					if(isset($errors['email']['recordFound'])) {
+						throw new \Exception("This email is already taken, please login as a normal user and then merge your account with Facebook.", \User\Module::ERROR_DUPLICATED_EMAIL);	
+					}
+					else {
+						throw new \Exception(json_encode($errors), \User\Module::ERROR_UNEXPECTED);	
+					}
+				}
+				$user = $serviceZfc->register($post);
+				
+				if($user){
+					$user->setName($this->full_name);
+		        
+			        $picture = new Picture();
+			        $picture->setId(new \MongoId());
+			        $picture->setUrl("https://graph.facebook.com/".$request->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
+			        $picture->setLongUrl("https://graph.facebook.com/".$request->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
+
+			        $user->setPicture($picture);
+			        $user->getOauth()->add($facebookUser);
+			        
+			        $role = new Role();
+	            	$role->setRoleId('user');
+
+			        $user->setRoles($role);
+			        $service->save($user);
+				}
 
 		        $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
 		        $this->getAuthPlugin()->getAuthService()->clearIdentity();
@@ -82,11 +110,38 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
 	        if(empty($result)) { 
 	            $this->merge($request);
 			}
+
+			$adapter = $this->getAuthPlugin()->getAuthAdapter();
+
+			$params = new Parameters();
+			$params->set('identity', $user->getEmail());
+			$params->set('credential', $user->getOauthAdapter($this::ADAPTER)->getId());
+			$emulateRequest = new Request();
+			$emulateRequest->setPost($params);
 			
-	        $this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
+	        $result = $adapter->prepareForAuthentication($emulateRequest);
+	        if ($result instanceof Response) {
+	            return $result;
+	        }
+
+	        $auth = $this->getAuthPlugin()->getAuthService()->authenticate($adapter);
+	        if(! $auth->isValid()) {
+	        	$result = $auth->getMessages();
+				$message = "Bad request.";
+				$errorCode = \User\Module::ERROR_UNEXPECTED;
+				if(isset($result[0])) {
+					$message = $result[0];
+					$errorCode = \User\Module::ERROR_LOGIN_FAILED;
+				}
+	        	throw new \Exception($message, \User\Module::ERROR_LOGIN_FAILED);
+	        }
+
+	        $user = $this->getAuthPlugin()->getIdentity();
+
+	        /*$this->getAuthPlugin()->getAuthAdapter()->resetAdapters();
 	        $this->getAuthPlugin()->getAuthService()->clearIdentity();
-	        $this->getAuthPlugin()->getAuthService()->getStorage()->write($user);
-	        
+	        $this->getAuthPlugin()->getAuthService()->getStorage()->write($user);*/
+
 	        return $user;
 	   }
 	}
@@ -138,16 +193,17 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     public function merge($data){
     	$service = $this->getUserService();
     	$this->initialize();
-    	$user = $this->getCurrentUser();
+    	$user = $this->getAuthService()->getIdentity();
+    	
+    	if(empty($user)){
+    		$user = $this->getCurrentUser();
+    	}
 
-
-    	if($user->getPicture()==''){
+    	if(empty($user->getPicture())){
     		$picture = new Picture();
 	        $picture->setId(new \MongoId());
 	        $picture->setUrl("https://graph.facebook.com/".$data->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
 	        $picture->setLongUrl("https://graph.facebook.com/".$data->get('facebookId')."/picture?width=".\User\Helper\Picture::PICTURE_WIDTH);
-
-	        $user->setPicture($picture);
     	}
 
     	$facebookToken = $data->get('facebookToken');
@@ -167,8 +223,7 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     	$service = $this->getUserService();
     	$this->initialize();
 
-    	$user = $this->getCurrentUser();
-
+    	$user = $this->getAuthPlugin()->getIdentity();
     	$fb = $user->getOauthAdapter($this::ADAPTER);
     	$user->getOauth()->removeElement($fb);
 
@@ -183,7 +238,17 @@ class FacebookAdapter extends AbstractAdapter implements IAdapter {
     	$session = new FacebookSession($token);
     	$request = new FacebookRequest($session, 'DELETE', '/me/permissions');
     	$response = $request->execute();
-
-    	$this->logout();
     }
+
+    private function getRegisterForm() {
+		return $this->getServiceLocator()->get('zfcuser_register_form');
+    }
+
+    private function getFormHydrator(){
+		return ($this->getServiceLocator()->get('zfcuser_register_form_hydrator'));
+    }
+	
+	private function getLoginForm() {
+		return $this->getServiceLocator()->get('zfcuser_login_form');
+	}
 }

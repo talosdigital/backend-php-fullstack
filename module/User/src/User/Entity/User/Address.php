@@ -34,4 +34,13 @@ class Address extends Document
     /** @ODM\ReferenceOne(targetDocument="Geolocation\Document\Geolocation") */
     protected $geolocation;
 
+    /** @ODM\String */
+    protected $city;
+
+    /** @ODM\String */
+    protected $state;
+
+    /** @ODM\String */
+    protected $country;
+
 }

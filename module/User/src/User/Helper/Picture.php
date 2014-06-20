@@ -2,7 +2,6 @@
 
 namespace User\Helper;
 
-use User\Helper\User as UserHelper;
 use User\Entity\User\Picture as PictureEntity;
 use Zend\Filter\File\Rename;
 use Imagine\Gd\Imagine;

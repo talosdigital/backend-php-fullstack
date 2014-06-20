@@ -6,7 +6,6 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 use Application\Entity\Response;
 use User\Entity\User;
 use Zend\View\Model\JsonModel;
-use User\Helper\User as UserHelper;
 
 /**
  *
@@ -78,7 +77,7 @@ class ProfileController extends AbstractRestfulController
 		$request = $this->getRequest();
 		$isPost = $request->isPost();
 		$isGet = $request->isGet();
-		$user = UserHelper::getCurrentUser();
+		$user = $this->zfcUserAuthentication()->getIdentity();
 
 		if($isGet){
 			$passwordRequired = \User\Facade\ProfileFacade::getPasswordRequired($this->getCurrentUser());
@@ -121,7 +120,7 @@ class ProfileController extends AbstractRestfulController
      *)
      */
 	public function changeEmailAction(){
-		$user = UserHelper::getCurrentUser();
+		$user = $this->zfcUserAuthentication()->getIdentity();
 		$data = $this->getRequest()->getPost();
 		
           $adapter = $this->loadEmailAdapter();
@@ -129,6 +128,44 @@ class ProfileController extends AbstractRestfulController
 
 		return new JsonModel(array("message" => "Email changed."));
 	}
+
+     /**
+     *
+     * @SWG\Api(
+     *   path="/profile/change-info",
+     *    @SWG\Operation(
+     *      nickname="change_info",
+     *      method = "POST",
+     *      summary="change info form",
+      *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="email",
+     *              name="email",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          ),
+     *          @SWG\Parameter(
+     *              name="name",
+     *              paramType="form",
+     *              type="string",
+     *              required=true
+     *          )
+     *      )
+     *   )
+     *  )
+     *)
+     */
+     public function changeInfoAction(){
+          $user = $this->zfcUserAuthentication()->getIdentity();
+          $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
+          $data = $this->getRequest()->getPost();
+          
+          $adapter = $this->loadEmailAdapter();
+          $adapter->changeInfo($data, $user);
+
+          return new JsonModel(array("message" => "Info changed."));
+     }
 
      /**
      *

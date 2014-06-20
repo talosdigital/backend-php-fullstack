@@ -3,9 +3,15 @@
 namespace User\Helper;
 
 class User {
+
+    protected $currentUser;
 	
 	public function getCurrentUser(){
-        return $this->zfcUserAuthentication()->getIdentity();
+        $sm = $this->getServiceLocator();
+        $auth = $sm->get('zfcuser_auth_service');
+        if ($auth->hasIdentity()) {
+            return $auth->getIdentity();
+        }
     }
 
     public function getUserMapper(){
@@ -13,6 +19,10 @@ class User {
     }
 
     public function getUserService(){
+
     	return new UserService($this->getServiceLocator());
+  
     }
+
+
 }

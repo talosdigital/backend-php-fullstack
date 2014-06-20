@@ -42,7 +42,9 @@ class PhoneController extends AbstractRestfulController
      */
 
  	public function getList() {
- 		$user = UserHelper::getCurrentUser();
+ 		$user = $this->zfcUserAuthentication()->getIdentity();
+        $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
+
 		$facade = new PhoneFacade($user);
 		
 		return new JsonModel($facade->getList($user->getPhonenumbers())); 		
@@ -70,7 +72,9 @@ class PhoneController extends AbstractRestfulController
      */
 	
 	public function create() {
-    	$user = UserHelper::getCurrentUser();
+    	$user = $this->zfcUserAuthentication()->getIdentity();
+        $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
+
     	$data = $this->getRequest()->getPost();
 
     	$phone = new Phonenumber();
@@ -78,7 +82,7 @@ class PhoneController extends AbstractRestfulController
 
         try{
 	    	$user->getPhonenumbers()->add($phone);
-	    	UserHelper::getUserMapper()->update($user);
+	    	$this->getServiceLocator()->get('userHelper')->saveUser($user);
     	}
     	catch (\Exception $ex){
     		throw new \Exception($ex, \User\Module::ERROR_UNEXPECTED);
@@ -115,7 +119,8 @@ class PhoneController extends AbstractRestfulController
      *)
      */
 	public function replaceList() {
-        $user = UserHelper::getCurrentUser();
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
 
     	$data = array();
 		parse_str($this->getRequest()->getContent(), $data);
@@ -124,7 +129,7 @@ class PhoneController extends AbstractRestfulController
     	$phonenumber->setPhonenumber($data['phonenumber']);
 
         try{
-	    	UserHelper::getUserMapper()->update($user);
+	    	$this->getServiceLocator()->get('userHelper')->saveUser($user);
     	}
     	catch (\Exception $ex){
     		throw new \Exception($ex, \User\Module::ERROR_UNEXPECTED);
@@ -154,7 +159,9 @@ class PhoneController extends AbstractRestfulController
      *)
      */
 	public function deleteList() {
-		$user = UserHelper::getCurrentUser();
+		$user = $this->zfcUserAuthentication()->getIdentity();
+        $user = $this->getServiceLocator()->get('userHelper')->getCurrentUser($user);
+        
     	$data = array();
 		parse_str($this->getRequest()->getContent(), $data);
 
@@ -166,7 +173,7 @@ class PhoneController extends AbstractRestfulController
 
     	$user->getPhonenumbers()->removeElement($phone);
 
-    	UserHelper::getUserMapper()->update($user);
+    	$this->getServiceLocator()->get('userHelper')->saveUser($user);
     	return new JsonModel(array('message' => 'Phone number deleted'));
 	}
 

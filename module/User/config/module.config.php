@@ -24,10 +24,12 @@ return array(
     'service_manager' => array(
         'factories' => array(
             'userService' => function ($serviceManager) {
-                return new Service\UserService();
+                return new Service\UserService($serviceManager);
             },
-        ),
-    ),	
+            'userHelper' => function ($serviceManager) {
+                return new Helper\UserHelper($serviceManager);
+            })
+        ),	
 
 	'bjyauthorize' => array(
 	    'guards' => array(
