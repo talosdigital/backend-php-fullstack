@@ -20,8 +20,8 @@ class AddressHelper {
 	        $address->setStreet($data->get('street'));
 	        $address->setPostCode($data->get('postCode'));
 	        $address->setCity($data->get('city'));
-	        $address->setCity($data->get('state'));
-	        $address->setCity($data->get('country'));
+	        $address->setState($data->get('state'));
+	        $address->setCountry($data->get('country'));
 			$address->setGeolocation(null);
     	
     	}
@@ -33,9 +33,9 @@ class AddressHelper {
 	        $address->setLastname($data['lastname']);
 	        $address->setStreet($data['street']);
 	        $address->setPostCode($data['postCode']);
-	        $address->setCity($data->get('city'));
-	        $address->setCity($data->get('state'));
-	        $address->setCity($data->get('country'));
+	        $address->setCity($data['city']);
+	        $address->setState($data['state']);
+	        $address->setCountry($data['country']);
 			$address->setGeolocation(null);
 			
     	}
