@@ -12,7 +12,8 @@ use Imagine\Image\Point;
 
 class Picture {
 
-	const UPLOAD_FOLDER = '/Images';
+	const UPLOAD_FOLDER = '/../../../../public/pictures/users';
+	const LONG_URL_DIR = 'http://backend-php.co/pictures/users';
 	const PICTURE_WIDTH = 500;
 	const MINIMUN_PICTURE_WIDTH = 100;
 	const MAXIMUN_PICTURE_SIZE = 10485760;
@@ -51,7 +52,7 @@ class Picture {
 		$tmpFileUrl = $pd->getId().'_tmp.'.$ext;
 		$fileUrl = $pd->getId().'.jpg';
 		
-		$pd->setLongUrl($this::UPLOAD_FOLDER."/".$fileUrl);
+		$pd->setLongUrl($this::LONG_URL_DIR."/".$user->getId()."/".$fileUrl);
 		$pd->setType($picture['type']);
 		$pd->setSize($picture['size']);
 		

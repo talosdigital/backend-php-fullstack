@@ -91,6 +91,30 @@ class UserEntityUserAddressHydrator implements HydratorInterface
             $this->class->reflFields['geolocation']->setValue($document, $return);
             $hydratedData['geolocation'] = $return;
         }
+
+        /** @Field(type="string") */
+        if (isset($data['city'])) {
+            $value = $data['city'];
+            $return = (string) $value;
+            $this->class->reflFields['city']->setValue($document, $return);
+            $hydratedData['city'] = $return;
+        }
+
+        /** @Field(type="string") */
+        if (isset($data['state'])) {
+            $value = $data['state'];
+            $return = (string) $value;
+            $this->class->reflFields['state']->setValue($document, $return);
+            $hydratedData['state'] = $return;
+        }
+
+        /** @Field(type="string") */
+        if (isset($data['country'])) {
+            $value = $data['country'];
+            $return = (string) $value;
+            $this->class->reflFields['country']->setValue($document, $return);
+            $hydratedData['country'] = $return;
+        }
         return $hydratedData;
     }
 }
