@@ -94,7 +94,7 @@ class TwitterAdapter extends AbstractAdapter implements IAdapter {
     }
 
     public function merge($request){
-
+    	$service = $this->getUserService();
     	$twitter = $this->initialize($request);      
 
         $validate = $twitter->account->verifyCredentials();
@@ -104,18 +104,16 @@ class TwitterAdapter extends AbstractAdapter implements IAdapter {
 
 		$response = $twitter->users->show($request->get('twitterName'));
         $twitterDocument = $this->getTwitterUser($response);
+ 
+    	$user = $this->getCurrentUser();
 
-        $user = $this->getAuthService()->getIdentity();
-    	
-    	if(empty($user)){
-    		$user = $this->getCurrentUser();
-    	}
-
-    	if(empty($user->getPicture())){
+    	if($user->getPicture()==''){
     		$picture = new Picture();
 	        $picture->setId(new \MongoId());
 	        $picture->setUrl($twitterDocument->getPicture());
 	        $picture->setLongUrl($twitterDocument->getPicture());
+
+	        $user->setPicture($picture);
     	}
 
     	$twUser = $this->getUserByTwitter($request->get('twitterId'));
@@ -125,15 +123,15 @@ class TwitterAdapter extends AbstractAdapter implements IAdapter {
     	}
 
     	$user->getOauth()->add($twitterDocument);
-        $this->getUserService()->getUserMapper()->update($user);
+        $service->save($user);
     }
 
     public function unmerge($data){
 
-    	$user = $this->getAuthService()->getIdentity();
+    	$user = $this->getCurrentUser();
     	$twitter = $user->getOauthAdapter($this::ADAPTER);
     	$user->getOauth()->removeElement($twitter);
 
-    	$this->getUserService()->getUserMapper()->update($user);
+    	$this->getUserService()->save($user);
     }
 }
