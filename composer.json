@@ -29,6 +29,7 @@
         "imagine/Imagine": "dev-master",
         "zendframework/zendoauth": "dev-master",
         "zendframework/zendservice-twitter": "2.1.0",
-        "zend/gdata": "dev-master"
+        "zend/gdata": "dev-master",
+        "paypal/rest-api-sdk-php" : "0.5.*"
     }
 }

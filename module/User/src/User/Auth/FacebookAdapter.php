@@ -19,14 +19,16 @@ use User\Entity\User\Role;
 
 class FacebookAdapter extends AbstractAdapter implements IAdapter {
 
-	const TOKEN = '324410064378636';
-	const SECRET = 'c4f122cd43915686cca6c7c4b1eaef6e'; 
 	const ADAPTER = "facebook";
 	private $full_name;
 	private $userService;
 
 	public function initialize(){
-		FacebookSession::setDefaultApplication($this::TOKEN, $this::SECRET);
+		$config = $this->getServiceLocator()->get("Config");
+		$token = $config['Facebook']['appId'];
+		$secret = $config['Facebook']['secret'];
+
+		FacebookSession::setDefaultApplication($token, $secret);
 	}
 
 	public function signup($request) {
